@@ -1,0 +1,187 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id    Int        @id @default(autoincrement())
+  title String
+  tags  PostTags[]
+}
+
+model PostTags {
+  id     Int   @id @default(autoincrement())
+  post   Post? @relation(fields: [postId], references: [id])
+  tag    Tag?  @relation(fields: [tagId], references: [id])
+  postId Int?
+  tagId  Int?
+}
+
+model Tag {
+  id    Int        @id @default(autoincrement())
+  name  String     @unique
+  posts PostTags[]
+}
+
+model country {
+  country_id         Int                  @id(map: "pk_country") @default(autoincrement())
+  country_iso_code   String?              @db.VarChar(10)
+  country_name       String?              @db.VarChar(200)
+  production_country production_country[] @ignore
+}
+
+model department {
+  department_id   Int          @id(map: "pk_department") @default(autoincrement())
+  department_name String?      @db.VarChar(200)
+  movie_crew      movie_crew[] @ignore
+}
+
+model gender {
+  gender_id  Int          @id(map: "pk_gender")
+  gender     String?      @db.VarChar(20)
+  movie_cast movie_cast[] @ignore
+}
+
+model genre {
+  genre_id     Int            @id(map: "pk_genre")
+  genre_name   String?        @db.VarChar(100)
+  movie_genres movie_genres[] @ignore
+}
+
+model keyword {
+  keyword_id     Int              @id(map: "pk_keyword")
+  keyword_name   String?          @db.VarChar(100)
+  movie_keywords movie_keywords[] @ignore
+}
+
+model language {
+  language_id     Int               @id(map: "pk_language") @default(autoincrement())
+  language_code   String?           @db.VarChar(10)
+  language_name   String?           @db.VarChar(500)
+  movie_languages movie_languages[] @ignore
+}
+
+model language_role {
+  role_id         Int               @id(map: "pk_langrole")
+  language_role   String?           @db.VarChar(20)
+  movie_languages movie_languages[] @ignore
+}
+
+model movie {
+  movie_id           Int                  @id(map: "pk_movie") @default(autoincrement())
+  title              String?              @db.VarChar(1000)
+  budget             Int?
+  homepage           String?              @db.VarChar(1000)
+  overview           String?              @db.VarChar(1000)
+  popularity         Decimal?             @db.Decimal(12, 6)
+  release_date       DateTime?            @db.Date
+  revenue            BigInt?
+  runtime            Int?
+  movie_status       String?              @db.VarChar(50)
+  tagline            String?              @db.VarChar(1000)
+  vote_average       Decimal?             @db.Decimal(4, 2)
+  vote_count         Int?
+  movie_cast         movie_cast[]         @ignore
+  movie_company      movie_company[]      @ignore
+  movie_crew         movie_crew[]         @ignore
+  movie_genres       movie_genres[]       @ignore
+  movie_keywords     movie_keywords[]     @ignore
+  movie_languages    movie_languages[]    @ignore
+  production_country production_country[] @ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model movie_cast {
+  movie_id       Int
+  person_id      Int
+  character_name String? @db.VarChar(400)
+  gender_id      Int?
+  cast_order     Int?
+  gender         gender? @relation(fields: [gender_id], references: [gender_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_mca_gender")
+  movie          movie?  @relation(fields: [movie_id], references: [movie_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_mca_movie")
+  person         person? @relation(fields: [person_id], references: [person_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_mca_per")
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model movie_company {
+  movie_id           Int?
+  company_id         Int?
+  production_company production_company? @relation(fields: [company_id], references: [company_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_mc_comp")
+  movie              movie?              @relation(fields: [movie_id], references: [movie_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_mc_movie")
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model movie_crew {
+  movie_id      Int?
+  person_id     Int?
+  department_id Int?
+  job           String?     @db.VarChar(200)
+  department    department? @relation(fields: [department_id], references: [department_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_mcr_dept")
+  movie         movie?      @relation(fields: [movie_id], references: [movie_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_mcr_movie")
+  person        person?     @relation(fields: [person_id], references: [person_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_mcr_per")
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model movie_genres {
+  movie_id Int?
+  genre_id Int?
+  genre    genre? @relation(fields: [genre_id], references: [genre_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_mg_genre")
+  movie    movie? @relation(fields: [movie_id], references: [movie_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_mg_movie")
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model movie_keywords {
+  movie_id   Int?
+  keyword_id Int?
+  keyword    keyword? @relation(fields: [keyword_id], references: [keyword_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_mk_keyword")
+  movie      movie?   @relation(fields: [movie_id], references: [movie_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_mk_movie")
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model movie_languages {
+  movie_id         Int?
+  language_id      Int?
+  language_role_id Int?
+  language         language?      @relation(fields: [language_id], references: [language_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_ml_lang")
+  movie            movie?         @relation(fields: [movie_id], references: [movie_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_ml_movie")
+  language_role    language_role? @relation(fields: [language_role_id], references: [role_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_ml_role")
+
+  @@ignore
+}
+
+model person {
+  person_id   Int          @id(map: "pk_person")
+  person_name String?      @db.VarChar(500)
+  movie_cast  movie_cast[] @ignore
+  movie_crew  movie_crew[] @ignore
+}
+
+model production_company {
+  company_id    Int             @id(map: "pk_prodcomp")
+  company_name  String?         @db.VarChar(200)
+  movie_company movie_company[] @ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model production_country {
+  movie_id   Int?
+  country_id Int?
+  country    country? @relation(fields: [country_id], references: [country_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_pc_country")
+  movie      movie?   @relation(fields: [movie_id], references: [movie_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_pc_movie")
+
+  @@ignore
+}
