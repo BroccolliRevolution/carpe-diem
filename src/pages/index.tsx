@@ -1,12 +1,24 @@
-import { Grid, Paper } from "@mui/material"
-import { useEffect, useRef, useState } from "react"
+import { Button, Grid, Paper, TextField } from "@mui/material"
+import { useRef, useState } from "react"
 
+type Activities = {
+  title: string
+  done: boolean
+}
 function Home() {
-  const [count, setCount] = useState(0)
+  const [activities, setActivities] = useState<Activities[]>([])
+  const [title, setTitle] = useState<string>("")
+  const titleText = useRef(null)
+
+  const saveActivity = () => {
+    const activity = { title, done: false }
+    setActivities([...activities, activity])
+    setTitle("")
+  }
 
   return (
-    <Grid container spacing={3}>
-      <Grid item xs={12} md={8} lg={9}>
+    <Grid container spacing={3} height={"100%"}>
+      <Grid item xs={12} md={7} lg={7}>
         <Paper
           sx={{
             p: 2,
@@ -15,12 +27,45 @@ function Home() {
             height: 240,
           }}
         >
-          {/* <Chart /> */}
-          CHART HERE
+          <h3>Activities</h3>
+          <Grid container>
+            <Grid item xs={7}>
+              <TextField
+                ref={titleText}
+                fullWidth
+                onChange={(e) => setTitle(e.target.value)}
+                value={title}
+                id="outlined-basic"
+                label="Outlined"
+                variant="outlined"
+                onKeyDown={(ev) => {
+                  console.log(`Pressed keyCode ${ev.key}`)
+                  if (ev.key === "Enter") {
+                    // Do code here
+                    ev.preventDefault()
+                    saveActivity()
+                  }
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={2} alignItems="stretch" style={{ display: "flex" }}>
+              <Button onClick={saveActivity} variant="contained">
+                +
+              </Button>
+            </Grid>
+            {title}
+            {JSON.stringify(activities)}
+            <ul>
+              {activities.map((activity) => (
+                <li key={activity.title}>{activity.title}</li>
+              ))}
+              <li></li>
+            </ul>
+          </Grid>
         </Paper>
       </Grid>
-      {/* Recent Deposits */}
-      <Grid item xs={12} md={4} lg={3}>
+      <Grid item xs={12} md={5} lg={5}>
         <Paper
           sx={{
             p: 2,
@@ -29,14 +74,7 @@ function Home() {
             height: 240,
           }}
         >
-          {/* <Deposits /> */}
-          Deposits
-        </Paper>
-      </Grid>
-      {/* Recent Orders */}
-      <Grid item xs={12}>
-        <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-          Orders
+          <h3>Daily Log</h3>
         </Paper>
       </Grid>
     </Grid>

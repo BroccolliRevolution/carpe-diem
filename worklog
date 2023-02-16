@@ -1,2 +1,0 @@
-npx prisma studio
-npx prisma generate - after schema change
