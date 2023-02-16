@@ -1,15 +1,7 @@
 "use client"
-import "./globals.css"
-import styles from "./page.module.css"
 import { SessionProvider } from "next-auth/react"
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-  QueryClientProvider,
-} from "react-query"
-import Auth from "@/components/auth/auth"
+import { QueryClient, QueryClientProvider } from "react-query"
+import "./globals.css"
 
 // Create a client
 const queryClient = new QueryClient()
@@ -31,9 +23,7 @@ export default function RootLayout({
       <body style={{ background: "#ffd" }}>
         <QueryClientProvider client={queryClient}>
           <SessionProvider session={session}>
-            <Auth>
-              <main>{children}</main>
-            </Auth>
+            <main>{children}</main>
           </SessionProvider>
         </QueryClientProvider>
       </body>

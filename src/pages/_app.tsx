@@ -1,8 +1,7 @@
 import Layout from "@/components/layout"
-import { AppProps } from "next/app"
 import { SessionProvider } from "next-auth/react"
+import { AppProps } from "next/app"
 import { QueryClient, QueryClientProvider } from "react-query"
-import Auth from "@/components/auth/auth"
 
 export default function MyApp({
   Component,
@@ -13,9 +12,7 @@ export default function MyApp({
     <Layout>
       <QueryClientProvider client={queryClient}>
         <SessionProvider session={session}>
-          <Auth>
-            <Component {...pageProps} />
-          </Auth>
+          <Component {...pageProps} />
         </SessionProvider>
       </QueryClientProvider>
     </Layout>
