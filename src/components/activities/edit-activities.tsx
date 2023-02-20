@@ -1,9 +1,19 @@
-import { Button, Grid, TextField } from "@mui/material"
+import DeleteIcon from "@mui/icons-material/Delete"
+import EditIcon from "@mui/icons-material/Edit"
+import { Button, Grid, IconButton, TextField } from "@mui/material"
 import { useRef, useState } from "react"
+import styled from "styled-components"
+import ActivityItem from "./activity-item"
 import UseActivities, { Activity } from "./useActivities"
 
 const EditActivities = () => {
-  const { activities, addActivity } = UseActivities()
+  const {
+    activities,
+    addActivity,
+    editActivity,
+    deleteActivity,
+    checkActivity,
+  } = UseActivities()
   const [title, setTitle] = useState<string>("")
   const titleText = useRef(null)
 
@@ -45,7 +55,38 @@ const EditActivities = () => {
         <Grid item xs={12} alignItems="stretch" style={{ display: "flex" }}>
           <ul style={{ listStyleType: "none", padding: 0 }}>
             {activities.map((activity: Activity) => (
-              <li key={activity.title}>{activity.title}</li>
+              // <ListItem key={activity.id}>
+              //   <span>{activity.title}</span>
+
+              //   <div>{activity.title}</div>
+
+              //   <div>
+              //     <IconButton
+              //       size="small"
+              //       color="error"
+              //       aria-label="delete activity"
+              //       component="label"
+              //       onClick={() => deleteActivity(activity)}
+              //     >
+              //       <DeleteIcon />
+              //     </IconButton>
+              //     <IconButton
+              //       size="small"
+              //       aria-label="edit activity"
+              //       component="label"
+              //       onClick={() => console.log(activity)}
+              //     >
+              //       <EditIcon />
+              //     </IconButton>
+              //   </div>
+              // </ListItem>
+              <ActivityItem
+                key={activity.id}
+                activity={activity}
+                checkActivity={(d) => checkActivity}
+                deleteActivity={deleteActivity}
+                editActivity={editActivity}
+              ></ActivityItem>
             ))}
           </ul>
         </Grid>
@@ -56,4 +97,11 @@ const EditActivities = () => {
     </Grid>
   )
 }
+
+const ListItem = styled.li`
+  display: flex;
+  justify-content: space-between;
+  min-width: 350px;
+`
+
 export default EditActivities
