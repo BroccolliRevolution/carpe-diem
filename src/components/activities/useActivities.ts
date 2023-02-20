@@ -1,14 +1,40 @@
-import { useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "react-query"
 
-type Activities = {
+export type Activity = {
   title: string
   done: boolean
 }
 
 const UseActivities = () => {
-  const [activities, setActivities] = useState<Activities[]>([])
+  const queryClient = useQueryClient()
 
-  return { activities, setActivities }
+  const fetchActivities = async () => {
+    const res = await fetch("/api/activities")
+    return res.json()
+  }
+
+  const addActivityMutation = async (activity: Activity) => {
+    await fetch("/api/add-activity", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(activity),
+    })
+  }
+  const activities =
+    useQuery({ queryKey: ["activities"], queryFn: fetchActivities }).data ?? []
+
+  const addActivity = useMutation({
+    mutationFn: addActivityMutation,
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ["activities"] })
+    },
+  }).mutate
+
+  return { activities, addActivity }
 }
 
 export default UseActivities

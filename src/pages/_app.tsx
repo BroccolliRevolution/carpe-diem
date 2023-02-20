@@ -8,6 +8,7 @@ export default function MyApp({
   pageProps: { session, ...pageProps },
 }: AppProps) {
   const queryClient = new QueryClient()
+
   return (
     <Layout>
       <QueryClientProvider client={queryClient}>

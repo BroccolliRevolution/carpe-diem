@@ -1,15 +1,15 @@
 import { Button, Grid, TextField } from "@mui/material"
 import { useRef, useState } from "react"
-import UseActivities from "./useActivities"
+import UseActivities, { Activity } from "./useActivities"
 
 const EditActivities = () => {
-  const { activities, setActivities } = UseActivities()
+  const { activities, addActivity } = UseActivities()
   const [title, setTitle] = useState<string>("")
   const titleText = useRef(null)
 
   const saveActivity = () => {
     const activity = { title, done: false }
-    setActivities([...activities, activity])
+    addActivity(activity)
     setTitle("")
   }
 
@@ -44,7 +44,7 @@ const EditActivities = () => {
         </Grid>
         <Grid item xs={12} alignItems="stretch" style={{ display: "flex" }}>
           <ul style={{ listStyleType: "none", padding: 0 }}>
-            {activities.map((activity) => (
+            {activities.map((activity: Activity) => (
               <li key={activity.title}>{activity.title}</li>
             ))}
           </ul>
