@@ -92,26 +92,25 @@ const UseActivities = () => {
 
   const checkActivity = useMutation({
     mutationFn: checkActivityMutation,
-    onSuccess: () => {
-      // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: ["activities"] })
-    },
     onMutate: async (activity) => {
       // Cancel any outgoing refetches
       // (so they don't overwrite our optimistic update)
       await queryClient.cancelQueries({ queryKey: ["activities", activity.id] })
 
       // Snapshot the previous value
-      const previousActivity = queryClient.getQueryData(["activities"])
+      const previous = queryClient.getQueryData(["activities"]) as Activity[]
+      activity.done = !activity.done
+
+      const newData = previous.map((p) => (p.id === activity.id ? activity : p))
 
       // Optimistically update to the new value
-      queryClient.setQueryData(["activities", activity.id], activity)
+      queryClient.setQueryData(["activities"], newData)
 
       // Return a context with the previous and new todo
-      return { previousActivity, activity }
+      return { newData, activity }
     },
     onSettled: (activity) => {
-      queryClient.invalidateQueries({ queryKey: ["activities", activity.id] })
+      queryClient.invalidateQueries({ queryKey: ["activities"] })
       //queryClient.invalidateQueries({ queryKey: ['todos', newTodo.id] })
     },
   }).mutate
