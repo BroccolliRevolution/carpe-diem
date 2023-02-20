@@ -2,13 +2,11 @@ import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar"
 import Box from "@mui/material/Box"
 import Container from "@mui/material/Container"
 import CssBaseline from "@mui/material/CssBaseline"
-import Grid from "@mui/material/Grid"
 import { createTheme, styled, ThemeProvider } from "@mui/material/styles"
 import Toolbar from "@mui/material/Toolbar"
 import * as React from "react"
 
 import Header from "./header"
-import Navbar from "./navbar"
 
 const drawerWidth: number = 240
 
@@ -39,7 +37,6 @@ const mdTheme = createTheme()
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <Navbar />
       <ThemeProvider theme={mdTheme}>
         <Box sx={{ display: "flex" }}>
           <CssBaseline />
