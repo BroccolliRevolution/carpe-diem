@@ -19,63 +19,45 @@ function Home() {
   return (
     <Grid container spacing={3} height={"100%"}>
       <Grid item xs={12} md={7} lg={7}>
-        <Paper
-          sx={{
-            p: 2,
-            display: "flex",
-            flexDirection: "column",
-            height: 240,
-          }}
-        >
-          <h3>Activities</h3>
-          <Grid container>
-            <Grid item xs={7}>
-              <TextField
-                ref={titleText}
-                fullWidth
-                onChange={(e) => setTitle(e.target.value)}
-                value={title}
-                id="outlined-basic"
-                label="Outlined"
-                variant="outlined"
-                onKeyDown={(ev) => {
-                  console.log(`Pressed keyCode ${ev.key}`)
-                  if (ev.key === "Enter") {
-                    // Do code here
-                    ev.preventDefault()
-                    saveActivity()
-                  }
-                }}
-              />
-            </Grid>
-
-            <Grid item xs={2} alignItems="stretch" style={{ display: "flex" }}>
-              <Button onClick={saveActivity} variant="contained">
-                +
-              </Button>
-            </Grid>
-            {title}
-            {JSON.stringify(activities)}
-            <ul>
-              {activities.map((activity) => (
-                <li key={activity.title}>{activity.title}</li>
-              ))}
-              <li></li>
-            </ul>
+        <h3>Activities</h3>
+        <Grid container>
+          <Grid item xs={7}>
+            <TextField
+              ref={titleText}
+              fullWidth
+              onChange={(e) => setTitle(e.target.value)}
+              value={title}
+              id="outlined-basic"
+              label="Outlined"
+              variant="outlined"
+              onKeyDown={(ev) => {
+                console.log(`Pressed keyCode ${ev.key}`)
+                if (ev.key === "Enter") {
+                  // Do code here
+                  ev.preventDefault()
+                  saveActivity()
+                }
+              }}
+            />
           </Grid>
-        </Paper>
+
+          <Grid item xs={2} alignItems="stretch" style={{ display: "flex" }}>
+            <Button onClick={saveActivity} variant="contained">
+              +
+            </Button>
+          </Grid>
+          {title}
+          {JSON.stringify(activities)}
+          <ul>
+            {activities.map((activity) => (
+              <li key={activity.title}>{activity.title}</li>
+            ))}
+            <li></li>
+          </ul>
+        </Grid>
       </Grid>
       <Grid item xs={12} md={5} lg={5}>
-        <Paper
-          sx={{
-            p: 2,
-            display: "flex",
-            flexDirection: "column",
-            height: 240,
-          }}
-        >
-          <h3>Daily Log</h3>
-        </Paper>
+        <h3>Daily Log</h3>
       </Grid>
     </Grid>
   )
