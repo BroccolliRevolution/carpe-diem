@@ -2,6 +2,7 @@ import Layout from "@/components/layout"
 import { SessionProvider } from "next-auth/react"
 import { AppProps } from "next/app"
 import { QueryClient, QueryClientProvider } from "react-query"
+import { ReactQueryDevtools } from "react-query/devtools"
 
 export default function MyApp({
   Component,
@@ -15,6 +16,7 @@ export default function MyApp({
         <SessionProvider session={session}>
           <Component {...pageProps} />
         </SessionProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </Layout>
   )
