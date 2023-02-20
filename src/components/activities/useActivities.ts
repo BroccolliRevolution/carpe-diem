@@ -96,6 +96,24 @@ const UseActivities = () => {
       // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: ["activities"] })
     },
+    onMutate: async (activity) => {
+      // Cancel any outgoing refetches
+      // (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries({ queryKey: ["activities", activity.id] })
+
+      // Snapshot the previous value
+      const previousActivity = queryClient.getQueryData(["activities"])
+
+      // Optimistically update to the new value
+      queryClient.setQueryData(["activities", activity.id], activity)
+
+      // Return a context with the previous and new todo
+      return { previousActivity, activity }
+    },
+    onSettled: (activity) => {
+      queryClient.invalidateQueries({ queryKey: ["activities", activity.id] })
+      //queryClient.invalidateQueries({ queryKey: ['todos', newTodo.id] })
+    },
   }).mutate
 
   return {

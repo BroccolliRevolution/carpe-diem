@@ -16,14 +16,6 @@ export default function Header() {
     <>
       <AppBar>
         <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            sx={{ mr: 2, display: { sm: "none" } }}
-          >
-            <MenuIcon />
-          </IconButton>
           <Typography
             variant="h6"
             component="div"
@@ -31,7 +23,7 @@ export default function Header() {
           >
             Carpe Diem
           </Typography>
-          <Box sx={{ display: { xs: "none", sm: "block" } }}>
+          <Box sx={{ display: { sm: "block" } }}>
             {navItems.map((item) => (
               <Link key={item.title} href={item.path}>
                 <Button sx={{ color: "#fff" }}>{item.title}</Button>
