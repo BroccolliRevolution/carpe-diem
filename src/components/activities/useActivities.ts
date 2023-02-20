@@ -39,17 +39,13 @@ const UseActivities = () => {
       body: JSON.stringify(activityData),
     })
   }
-  const checkActivityMutation = async ({
-    activity,
-    activityData,
-  }: EditType) => {
+  const checkActivityMutation = async (activity: Activity) => {
     await fetch(`/api/activity/check/${activity.id}`, {
-      method: "UPDATE",
+      method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(activityData),
     })
   }
 
