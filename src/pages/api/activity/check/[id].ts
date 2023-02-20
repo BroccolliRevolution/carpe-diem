@@ -6,7 +6,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
-  const { id, data } = req.query
+  const { id } = req.query
   if (!id) return
 
   const activity = await prisma.activities.findFirst({ where: { id: +id } })
@@ -14,5 +14,6 @@ export default async function handler(
     where: { id: +id },
     data: { done: !activity?.done },
   })
-  res.json(`edited id ${id}`)
+
+  setTimeout(() => res.json(`edited id ${id}`), 2000)
 }

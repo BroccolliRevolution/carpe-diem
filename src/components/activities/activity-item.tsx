@@ -1,7 +1,7 @@
 import DeleteIcon from "@mui/icons-material/Delete"
 import SaveIcon from "@mui/icons-material/Save"
 import EditIcon from "@mui/icons-material/Edit"
-import { IconButton, TextField } from "@mui/material"
+import { IconButton, TextField, Checkbox } from "@mui/material"
 import { useRef, useState } from "react"
 import styled from "styled-components"
 import UseActivities, { Activity } from "./useActivities"
@@ -25,8 +25,14 @@ const ActivityItem = ({
 
   return (
     <ListItem key={activity.id}>
+      <Checkbox
+        checked={activity.done}
+        onChange={() => checkActivity(activity)}
+      />
       {!editing ? (
-        <span>{activity.title}</span>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          {activity.title}
+        </div>
       ) : (
         <TextField
           ref={titleText}
@@ -36,7 +42,7 @@ const ActivityItem = ({
           id="outlined-basic"
           label="Outlined"
           variant="outlined"
-          focused={true}
+          autoFocus
           onKeyDown={(ev) => {
             if (ev.key === "Enter") {
               ev.preventDefault()
@@ -53,11 +59,7 @@ const ActivityItem = ({
           size="small"
           aria-label="edit activity"
           component="label"
-          onClick={() => {
-            setEditing(!editing)
-            // TODO @Peto: finish focus here
-            titleText.current && titleText.current?.focus()
-          }}
+          onClick={() => setEditing(!editing)}
         >
           <EditIcon />
         </IconButton>
