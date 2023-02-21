@@ -173,18 +173,19 @@ describe("Activities", () => {
   })
 
   test("when activity is checked, daily log entries count increase", () => {
-    const dailyLogEntriesCount = new GetDailyLogEntries(db).execute().length
-    expect(dailyLogEntriesCount).toBe(0)
-
-    console.log(dailyLogEntriesCount)
+    const countBefore = new GetDailyLogEntries(db).execute().length
+    expect(countBefore).toBe(0)
 
     const activity = getFirstActivity()
+
+    // TODO @Peto: maybe use just activity and not boolean done as an argument
     new ToggleActivityDone(db, new AddToDailyLog(db)).execute(
       activity,
       !activity.done
     )
 
-    console.log(dailyLogEntriesCount)
-    expect(dailyLogEntriesCount).toBe(dailyLogEntriesCount + 1)
+    const countAfter = new GetDailyLogEntries(db).execute().length
+
+    expect(countAfter).toBe(countBefore + 1)
   })
 })
