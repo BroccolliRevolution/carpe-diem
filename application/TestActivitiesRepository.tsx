@@ -1,11 +1,10 @@
 import ActivityData from "core/activities/ActivityData"
-import DailyLog from "core/daily-log/DailyLog"
 import BasicName from "core/types/BasicName"
 import Activity from "../core/activities/Activity"
 import DbGateway from "../core/DbGateway"
 import TempMemoryDatabase from "./TempMemoryDatabase"
 
-class Repository implements DbGateway {
+class TestActivitiesRepository implements DbGateway {
   private db = new TempMemoryDatabase()
 
   createActivity(data: ActivityData) {
@@ -13,30 +12,40 @@ class Repository implements DbGateway {
   }
 
   getAllActivities() {
-    return this.db.getAllActivities()
+    return Promise.resolve(this.db.getAllActivities())
   }
 
-  getActivity(name: BasicName) {
-    return this.db.getActivity(name)
+  getActivityByName(name: BasicName) {
+    const a = this.db.getActivityByName(name)
+
+    return Promise.resolve(a)
+  }
+
+  getActivityById(id: number) {
+    return Promise.resolve(this.db.getActivityById(id))
   }
 
   addActivity(activity: Activity) {
     this.db.addActivity(activity)
   }
 
-  removeActivity(activity: Activity) {
-    this.db.removeActivity(activity)
+  deleteActivity(activityId: number) {
+    this.db.deleteActivity(activityId)
   }
 
   private retrieveActivityFromDb(activity: Activity) {
-    return this.db.activities.find((a) => activity.name === a.name)
+    return this.db.activities.find((a) => activity.title === a.title)
+  }
+
+  editActivity(id: number, data: ActivityData) {
+    this.db.editActivity(id, data)
   }
 
   editActivityName(activity: Activity, name: BasicName) {
     const activityFound = this.retrieveActivityFromDb(activity)
 
     if (activityFound) {
-      activityFound.name = name
+      activityFound.title = name
     }
   }
 
@@ -65,4 +74,4 @@ class Repository implements DbGateway {
   }
 }
 
-export default Repository
+export default TestActivitiesRepository

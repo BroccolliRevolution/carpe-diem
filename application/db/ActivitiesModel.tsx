@@ -1,9 +1,11 @@
+import { prisma } from "@/db"
+import TempMemoryDatabase from "application/TempMemoryDatabase"
+import Activity from "core/activities/Activity"
 import ActivityData from "core/activities/ActivityData"
 import DailyLog from "core/daily-log/DailyLog"
-import Activity from "../core/activities/Activity"
-import BasicName from "../core/types/BasicName"
+import BasicName from "core/types/BasicName"
 
-class TempMemoryDatabase {
+class ActivitiesModel {
   public activities: Activity[] = []
   public dailyLogEntries: DailyLog[] = []
 
@@ -20,24 +22,12 @@ class TempMemoryDatabase {
     return this.activities
   }
 
-  editActivity(id: number, data: ActivityData) {
-    this.activities = this.activities.map((a: Activity) =>
-      a.id === id ? new Activity({ ...data, id: a.id }) : a
-    )
-  }
-
-  public getActivityById(id: number) {
-    return this.activities.find((a) => a.id === id) ?? null
-  }
-
-  public getActivityByName(name: BasicName) {
+  public getActivity(name: BasicName) {
     return this.activities.find((a) => a.title.toEquals(name)) ?? null
   }
 
-  public deleteActivity(activityId: number) {
-    this.activities = this.activities.filter((a) => {
-      a.id !== activityId
-    })
+  public async removeActivity(activity: Activity) {
+    await prisma.activities.delete({ where: { id: activity.id } })
   }
 
   public addToDailyLog(activity: Activity) {
@@ -50,4 +40,4 @@ class TempMemoryDatabase {
   }
 }
 
-export default TempMemoryDatabase
+export default ActivitiesModel

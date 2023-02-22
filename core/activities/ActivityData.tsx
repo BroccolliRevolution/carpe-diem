@@ -1,14 +1,9 @@
-interface Acti {
-  done: boolean
-  name: string
-}
-
-class ActivityData implements Acti {
-  public done = false
-  public constructor(
-    public readonly name: string,
-    public readonly date: string
-  ) {}
+interface ActivityData {
+  readonly done?: boolean
+  readonly title?: string
+  readonly date?: string
+  readonly id?: number
+  readonly priority?: number
 }
 
 export default ActivityData

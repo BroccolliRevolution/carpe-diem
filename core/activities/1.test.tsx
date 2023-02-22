@@ -1,35 +1,42 @@
 import "@testing-library/jest-dom"
-import Repository from "application/Repository"
 
-import BasicName from "core/types/BasicName"
-import Activity from "./Activity"
-import AddActivity from "./AddActivity"
-import EditActivity from "./EditActivity"
-import GetActivity from "./GetActivity"
-import GetAllActivities from "./GetAllActivities"
-import ToggleActivityDone from "./ToggleActivityDone"
-import RemoveActivity from "./RemoveActivity"
+import TestActivitiesRepository from "application/TestActivitiesRepository"
 import AddToDailyLog from "core/daily-log/AddToDailyLog"
 import GetDailyLogEntries from "core/daily-log/GetDailyLogEntries"
+import BasicName from "core/types/BasicName"
+import Activity from "./Activity"
+import ActivityData from "./ActivityData"
+import AddActivity from "./AddActivity"
+import DeleteActivity from "./DeleteActivity"
+import EditActivity from "./EditActivity"
+import EditActivityName from "./EditActivityName"
+import EditActivityPriority from "./EditActivityPriority"
+import GetActivityById from "./GetActivityById"
+import GetActivity from "./GetActivityByName"
+import GetAllActivities from "./GetAllActivities"
+import ToggleActivityDone from "./ToggleActivityDone"
 
 const firstActivityName = "cleanup your room"
 const firstActivityPriority = 1
+const firstActivityId = 1
+const firstActivityDate = Date.now().toLocaleString()
 
-let db: Repository
+let db: TestActivitiesRepository
 const seedActivity = (
-  db: Repository,
+  db: TestActivitiesRepository,
   name = firstActivityName,
-  priority = firstActivityPriority
+  priority = firstActivityPriority,
+  id = firstActivityId,
+  date = firstActivityDate
 ) => {
-  const activityName = new BasicName(name)
-  const activity = new Activity(activityName, priority, "")
-  const addActivity = new AddActivity(db, new GetActivity(db))
+  const activity = new Activity({ title: name, priority, id, date })
+  const addActivity = new AddActivity(db)
   addActivity.execute(activity)
   return activity
 }
 
 const dbInitAndSeed = () => {
-  db = new Repository()
+  db = new TestActivitiesRepository()
   seedActivity(db)
 }
 
@@ -41,39 +48,42 @@ describe("Activities", () => {
   const getActivityByName = (name: string) => {
     const activityName = new BasicName(name)
     const getActivity = new GetActivity(db)
-    return getActivity.execute(activityName) as Activity
+    return getActivity.execute(activityName)
   }
 
-  test("Can retrieve activity by its name", () => {
-    const retrievedActivity = getActivityByName(firstActivityName)
-    const name = retrievedActivity?.name.value
+  test("Can retrieve activity by its name", async () => {
+    const retrievedActivity = await getActivityByName(firstActivityName)
+    const name = retrievedActivity?.title.value
     expect(name).toBe(firstActivityName)
   })
 
-  test("Givent incorrect name, activity should not be retrieved", () => {
+  test("Givent incorrect name, activity should not be retrieved", async () => {
     const nonExistentNane = "non existing activity"
-    const retrievedActivity = getActivityByName(nonExistentNane)
 
-    expect(() => {
-      addActivity(firstActivityName)
-    }).toThrow(`Activity ${firstActivityName} already exists`)
+    const activity = await getActivityByName(nonExistentNane)
+    expect(activity).toBe(null)
   })
 
   const addActivity = (name: string) => {
-    const activityName = new BasicName(name)
-    const activity = new Activity(activityName, 1, "")
-    const addActivity = new AddActivity(db, new GetActivity(db))
+    const activity = new Activity({
+      title: name,
+      date: Date.now().toLocaleString(),
+      done: false,
+      id: 3,
+      priority: 2,
+    })
+    const addActivity = new AddActivity(db)
     addActivity.execute(activity)
   }
 
-  const expectActivityExists = (name: string) => {
-    const activity = getActivityByName(name)
-    expect(activity?.name.value).toBe(name)
+  const expectActivityExists = async (name: string) => {
+    const activity = await getActivityByName(name)
+    expect(activity?.title.value).toBe(name)
   }
 
-  const allActivitiesCount = () => {
-    const allActivities = new GetAllActivities(db)
-    return allActivities.execute().length
+  const allActivitiesCount = async () => {
+    const allActivities = await new GetAllActivities(db).execute()
+    return allActivities.length
   }
 
   test("given adding activity with the length too long, error should be thrown", () => {
@@ -97,59 +107,69 @@ describe("Activities", () => {
     }
   })
 
-  test("adds one activity - length of the activities increases by 1 and the same activity can be retrieved", () => {
-    const lengthBefore = allActivitiesCount()
+  test("adds one activity - length of the activities increases by 1 and the same activity can be retrieved", async () => {
+    const lengthBefore = await allActivitiesCount()
     const name = "test"
     addActivity(name)
-    const lengthAfter = allActivitiesCount()
+    const lengthAfter = await allActivitiesCount()
     expectActivityExists(name)
     expect(lengthAfter).toBe(lengthBefore + 1)
   })
 
-  test("removes 1 activity, activity not present", () => {
-    const activity = getActivityByName(firstActivityName)
+  test("removes 1 activity, activity not present", async () => {
+    const activity = await getActivityByName(firstActivityName)
 
-    const lengthBefore = allActivitiesCount()
-    new RemoveActivity(db).execute(activity)
-    const lengthAfter = allActivitiesCount()
+    const lengthBefore = await allActivitiesCount()
+    new DeleteActivity(db).execute(activity?.id as number)
+    const lengthAfter = await allActivitiesCount()
 
     expect(lengthAfter).toBe(lengthBefore - 1)
   })
 
-  test("cannot add a new activity with already existing name (activity name must be unique)", () => {
-    expect(() => {
-      addActivity(firstActivityName)
-    }).toThrow(`Activity ${firstActivityName} already exists`)
-  })
+  test("edit activity name", async () => {
+    const activity = await getFirstActivity()
 
-  test("edit activity name", () => {
-    const activity = getFirstActivity()
-
-    expect(activity.name.value).toEqual(firstActivityName)
+    expect(activity.title.value).toEqual(firstActivityName)
 
     const editedName = new BasicName("go out a little")
-    new EditActivity(db).name(activity, editedName)
+    new EditActivityName(db).execute(activity, editedName)
 
-    expect(activity?.name.value).toBe(editedName.value)
+    expect(activity?.title.value).toBe(editedName.value)
   })
 
-  const getFirstActivity = () => {
-    const activity = new GetActivity(db).execute(
-      new BasicName(firstActivityName)
-    ) as Activity
+  const getFirstActivity = async () => {
+    const activity = (await new GetActivityById(db).execute(
+      firstActivityId
+    )) as Activity
+
     expect(activity).not.toBe(null)
     return activity
   }
 
-  test("edit activity priority", () => {
-    const activity = getFirstActivity()
+  test("edit activity priority", async () => {
+    const activity = await getFirstActivity()
 
     const newPriority = 2
-    new EditActivity(db).priority(activity, newPriority)
+    new EditActivityPriority(db).execute(activity, newPriority)
 
-    const activityChanged = new GetActivity(db).execute(activity.name)
+    const activityChanged = await new GetActivity(db).execute(activity.title)
 
     expect(activityChanged?.priority).toBe(newPriority)
+  })
+
+  test("given activity data - can edit activity properties", async () => {
+    const data: ActivityData = {
+      title: "new title here",
+      done: false,
+      priority: 2,
+      date: Date.now().toLocaleString(),
+    }
+
+    new EditActivity(db).execute(firstActivityId, data)
+
+    const activity = await getFirstActivity()
+
+    expect(activity.title.value).toBe(data.title)
   })
 
   const expectToggleDoneOnCheck = (activity: Activity) => {
@@ -158,25 +178,25 @@ describe("Activities", () => {
     expect(activity.done).toBe(!done)
   }
 
-  test("when toggle activity check (false->true) - activity is done, and vice versa", () => {
-    const activity = getFirstActivity()
+  test("when toggle activity check (false->true) - activity is done, and vice versa", async () => {
+    const activity = await getFirstActivity()
     expect(activity.done).toBe(false)
     expectToggleDoneOnCheck(activity)
   })
 
-  test("when activity is checked, it gets logged to daily log", () => {
-    const activity = getFirstActivity()
+  test("when activity is checked, it gets logged to daily log", async () => {
+    const activity = await getFirstActivity()
     const addToDailyLog = new AddToDailyLog(db)
     const spy = jest.spyOn(addToDailyLog, "execute")
     new ToggleActivityDone(db, addToDailyLog).execute(activity, !activity.done)
     expect(spy).toHaveBeenCalled()
   })
 
-  test("when activity is checked, daily log entries count increase", () => {
+  test("when activity is checked, daily log entries count increase", async () => {
     const countBefore = new GetDailyLogEntries(db).execute().length
     expect(countBefore).toBe(0)
 
-    const activity = getFirstActivity()
+    const activity = await getFirstActivity()
 
     // TODO @Peto: maybe use just activity and not boolean done as an argument
     new ToggleActivityDone(db, new AddToDailyLog(db)).execute(

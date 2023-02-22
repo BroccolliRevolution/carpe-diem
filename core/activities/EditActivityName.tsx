@@ -2,14 +2,13 @@ import Activity from "./Activity"
 import DbGateway from "../DbGateway"
 import BasicName from "../types/BasicName"
 import Command from "core/Command"
-import ActivityData from "./ActivityData"
 
-class EditActivity implements Command {
+class getActivityByName implements Command {
   public constructor(private db: DbGateway) {}
 
-  execute(id: number, data: ActivityData) {
-    this.db.editActivity(id, data)
+  public execute(activity: Activity, name: BasicName) {
+    this.db.editActivityName(activity, name)
   }
 }
 
-export default EditActivity
+export default getActivityByName

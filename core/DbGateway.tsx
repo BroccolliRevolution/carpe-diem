@@ -1,12 +1,15 @@
 import Activity from "./activities/Activity"
+import ActivityData from "./activities/ActivityData"
 import DailyLog from "./daily-log/DailyLog"
 import BasicName from "./types/BasicName"
 
 interface DbGateway {
-  getAllActivities: () => Activity[]
-  getActivity: (name: BasicName) => Activity | null
+  editActivity: (id: number, data: ActivityData) => void
+  getAllActivities: () => Promise<Activity[]>
+  getActivityByName: (name: BasicName) => Promise<Activity | null>
+  getActivityById: (id: number) => Promise<Activity | null>
   addActivity: (activity: Activity) => void
-  removeActivity: (activity: Activity) => void
+  deleteActivity: (activityId: number) => void
   editActivityName: (activity: Activity, name: BasicName) => void
   editActivityPriority: (activity: Activity, priority: number) => void
   toggleActivityDone: (activity: Activity, done: boolean) => void
