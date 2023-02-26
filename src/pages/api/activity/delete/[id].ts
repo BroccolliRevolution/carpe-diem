@@ -1,7 +1,4 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-
-import ActivitiesRepository from "application/db/ActivitiesRepository"
-import DeleteActivity from "core/activities/DeleteActivity"
+import { activitiesRepo } from "application/db/ActivitiesRepo"
 import type { NextApiRequest, NextApiResponse } from "next"
 
 export default async function handler(
@@ -11,5 +8,6 @@ export default async function handler(
   const { id } = req.query
   if (!id) return
 
-  new DeleteActivity(new ActivitiesRepository()).execute(+id)
+  await activitiesRepo.deleteActivity(+id)
+  res.json(`deleted id ${id}`)
 }

@@ -1,5 +1,5 @@
+import styled from "@emotion/styled"
 import Box from "@mui/material/Box"
-import Container from "@mui/material/Container"
 import CssBaseline from "@mui/material/CssBaseline"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import Toolbar from "@mui/material/Toolbar"
@@ -29,12 +29,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             }}
           >
             <Toolbar />
-            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-              {children}
-            </Container>
+            <ContainerWrapper>{children}</ContainerWrapper>
           </Box>
         </Box>
       </ThemeProvider>
     </>
   )
 }
+
+const ContainerWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+`

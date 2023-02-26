@@ -1,5 +1,4 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { prisma } from "@/db"
+import { activitiesRepo } from "application/db/ActivitiesRepo"
 import type { NextApiRequest, NextApiResponse } from "next"
 
 export default async function handler(
@@ -9,11 +8,6 @@ export default async function handler(
   const { id } = req.query
   if (!id) return
 
-  const activity = await prisma.activities.findFirst({ where: { id: +id } })
-  await prisma.activities.update({
-    where: { id: +id },
-    data: { done: !activity?.done },
-  })
-
-  setTimeout(() => res.json(`edited id ${id}`), 2000)
+  await activitiesRepo.toggleActivity(+id)
+  res.json(`edited id ${id}`)
 }

@@ -3,15 +3,21 @@ import { useMutation, useQuery, useQueryClient } from "react-query"
 export type Activity = {
   id?: number
   title: string
+  created_at?: string
   done: boolean
+  priority: number
 }
 
 const UseActivities = () => {
   const queryClient = useQueryClient()
 
   const fetchActivities = async () => {
-    const res = await fetch("/api/activity/all")
-    return res.json()
+    const res = (await (
+      await fetch("/api/activity/all")
+    ).json()) as unknown as Activity[]
+
+    // TODO @Peto: validate for type? from API call?
+    return res
   }
 
   const addActivityMutation = async (activity: Activity) => {
@@ -95,7 +101,9 @@ const UseActivities = () => {
     onMutate: async (activity) => {
       // Cancel any outgoing refetches
       // (so they don't overwrite our optimistic update)
-      await queryClient.cancelQueries({ queryKey: ["activities", activity.id] })
+      await queryClient.cancelQueries({
+        queryKey: ["activities", activity.id],
+      })
 
       // Snapshot the previous value
       const previous = queryClient.getQueryData(["activities"]) as Activity[]
@@ -105,13 +113,15 @@ const UseActivities = () => {
 
       // Optimistically update to the new value
       queryClient.setQueryData(["activities"], newData)
-
-      // Return a context with the previous and new todo
       return { newData, activity }
     },
-    onSettled: (activity) => {
-      queryClient.invalidateQueries({ queryKey: ["activities"] })
-      //queryClient.invalidateQueries({ queryKey: ['todos', newTodo.id] })
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["activities_not_done"],
+      })
+      queryClient.invalidateQueries({
+        queryKey: ["activities_done"],
+      })
     },
   }).mutate
 

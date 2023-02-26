@@ -7,22 +7,49 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Activities {
-  id    Int     @id @default(autoincrement())
-  title String
-  done  Boolean
+// activities which don't have permanentTaskId (NULL) are ephemeral tasks - they change every day
+model Activity {
+  id         Int       @id @default(autoincrement())
+  title      String
+  done       Boolean   @default(false)
+  done_at    DateTime? // or done_at DateTime
+  created_at DateTime  @default(now())
+  priority   Int       @default(1)
+
+  permanentTask PermanentTask? @relation(fields: [permanentTaskId], references: [id])
+  note          String? // note for done activity / or not done yet
+  grade         Int            @default(0)
+
+  // order Int
+  // reward Int
+  // score  Int
+
+  permanentTaskId Int?
 }
 
-// model PostTags {
-//   id     Int   @id @default(autoincrement())
-//   post   Post? @relation(fields: [postId], references: [id])
-//   tag    Tag?  @relation(fields: [tagId], references: [id])
-//   postId Int?
-//   tagId  Int?
-// }
+model PermanentTask {
+  id         Int      @id @default(autoincrement())
+  title      String
+  active     Boolean  @default(true)
+  for_review Boolean // whether it should appear for review every week 
+  note       String // note just for permanent task
+  priority   Int      @default(1)
+  created_at DateTime @default(now())
 
-// model Tag {
-//   id    Int        @id @default(autoincrement())
-//   name  String     @unique
-//   posts PostTags[]
-// }
+  // importance Int
+  // level      Int
+  // order      Int
+  activities Activity[]
+}
+
+model DailyPerformance {
+  id                Int      @id @default(autoincrement())
+  activitiesCount   Int      @default(0)
+  created_at        DateTime @default(now())
+  reward            Int      @default(0)
+  score             Int      @default(0)
+  previousDayStreak Int      @default(0)
+  streak            Int      @default(0)
+}
+
+//@TODO categories/tags or projects

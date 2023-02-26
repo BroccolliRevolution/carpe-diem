@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 
-function Home() {
+function Edit() {
   const [count, setCount] = useState(0)
 
   return (
@@ -9,4 +9,4 @@ function Home() {
     </div>
   )
 }
-export default Home
+export default Edit
