@@ -14,8 +14,8 @@ export type ActivityResponse = Activity
 
 export type ActivityEditRequest = {
   id: number
-  title: string
-  done: boolean
+  title?: string
+  done?: boolean
 }
 export type ActivityAddRequest = {
   title: string

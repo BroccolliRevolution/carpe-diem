@@ -1,11 +1,29 @@
 import { useMutation, useQuery, useQueryClient } from "react-query"
 
 export type Activity = {
-  id?: number
+  id: number
   title: string
-  created_at?: string
+  created_at: string
+  done_at?: string
   done: boolean
   priority: number
+}
+
+export type ActivityAddData = {
+  title: string
+  priority?: number
+}
+
+export type ActivityEditData = {
+  id: number
+  title?: string
+  priority?: number
+  done?: boolean
+}
+
+export type EditType = {
+  activity: Activity
+  activityData: ActivityEditData
 }
 
 const UseActivities = () => {
@@ -20,7 +38,7 @@ const UseActivities = () => {
     return res
   }
 
-  const addActivityMutation = async (activity: Activity) => {
+  const addActivityMutation = async (activity: ActivityAddData) => {
     await fetch("/api/activity/add", {
       method: "POST",
       headers: {
@@ -31,10 +49,6 @@ const UseActivities = () => {
     })
   }
 
-  type EditType = {
-    activity: Activity
-    activityData: Activity
-  }
   const editActivityMutation = async ({ activity, activityData }: EditType) => {
     await fetch(`/api/activity/edit/${activity.id}`, {
       method: "POST",
@@ -45,8 +59,19 @@ const UseActivities = () => {
       body: JSON.stringify(activityData),
     })
   }
+
   const checkActivityMutation = async (activity: Activity) => {
     await fetch(`/api/activity/check/${activity.id}`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+  }
+
+  const repeatActivityMutation = async (activity: Activity) => {
+    await fetch(`/api/activity/repeat/${activity.id}`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -117,10 +142,16 @@ const UseActivities = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["activities_not_done"],
+        queryKey: ["activities"],
       })
+    },
+  }).mutate
+
+  const repeatActivityToday = useMutation({
+    mutationFn: repeatActivityMutation,
+    onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["activities_done"],
+        queryKey: ["activities"],
       })
     },
   }).mutate
@@ -131,6 +162,7 @@ const UseActivities = () => {
     deleteActivity,
     editActivity,
     checkActivity,
+    repeatActivityToday,
   }
 }
 

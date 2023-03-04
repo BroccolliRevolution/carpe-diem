@@ -2,16 +2,18 @@ import styled from "@emotion/styled"
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
 import SaveIcon from "@mui/icons-material/Save"
-import { Checkbox, IconButton, TextField, Tooltip } from "@mui/material"
+import RestartAltIcon from "@mui/icons-material/RestartAlt"
+import { Button, Checkbox, IconButton, TextField, Tooltip } from "@mui/material"
 import dayjs from "dayjs"
 import { useRef, useState } from "react"
-import { Activity } from "./useActivities"
+import { Activity, EditType } from "./useActivities"
 
 type Props = {
   activity: Activity
   deleteActivity: (activity: Activity) => void
-  editActivity: (data: { activity: Activity; activityData: Activity }) => void
+  editActivity: (data: EditType) => void
   checkActivity: (activity: Activity) => void
+  repeatActivityToday: (activity: Activity) => void
 }
 
 const ActivityItem = ({
@@ -19,10 +21,16 @@ const ActivityItem = ({
   deleteActivity,
   editActivity,
   checkActivity,
+  repeatActivityToday,
 }: Props) => {
   const [title, setTitle] = useState<string>(activity.title)
   const [editing, setEditing] = useState(false)
   const titleText = useRef(null)
+
+  // TODO @Peto: "DD/MM/YYYY" extract this format somewhere out, activities component use this as well
+  const isTodaysActivity =
+    dayjs(activity.created_at).format("DD/MM/YYYY") ===
+    dayjs().format("DD/MM/YYYY")
 
   return (
     <ListItem
@@ -53,13 +61,31 @@ const ActivityItem = ({
           <EditIcon />
         </IconButton>
 
+        {!isTodaysActivity && (
+          <Tooltip placement="top" arrow={true} title="repeat again today">
+            <IconButton
+              size="small"
+              aria-label="repeat again today"
+              component="label"
+              onClick={() => {
+                repeatActivityToday(activity)
+              }}
+            >
+              <RestartAltIcon />
+            </IconButton>
+          </Tooltip>
+        )}
+
         {editing && (
           <IconButton
             size="small"
             aria-label="edit activity"
             component="label"
             onClick={() => {
-              editActivity({ activity, activityData: { ...activity, title } })
+              editActivity({
+                activity,
+                activityData: { id: activity.id, title },
+              })
               setEditing(!editing)
             }}
           >
@@ -69,22 +95,17 @@ const ActivityItem = ({
       </div>
 
       {!editing ? (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            flex: "1 1 70%",
-            justifyContent: "flex-end",
-          }}
-        >
+        <ActivityTitle>
           <Tooltip
             placement="top"
             arrow={true}
-            title={dayjs(activity.created_at).format("HH:mm:ss")}
+            title={dayjs(activity?.done_at ?? activity.created_at).format(
+              "HH:mm:ss"
+            )}
           >
             <span>{activity.title}</span>
           </Tooltip>
-        </div>
+        </ActivityTitle>
       ) : (
         <TextField
           ref={titleText}
@@ -99,16 +120,16 @@ const ActivityItem = ({
             if (ev.key === "Enter") {
               ev.preventDefault()
 
-              editActivity({ activity, activityData: { ...activity, title } })
+              editActivity({
+                activity,
+                activityData: { id: activity.id, title },
+              })
               setEditing(!editing)
             }
           }}
         />
       )}
-      {/* {activity.done === false && (
-        <button onClick={() => checkActivity(activity)}>Done</button>
-      )}
-       */}
+
       <Checkbox
         checked={activity.done}
         onChange={() => checkActivity(activity)}
@@ -120,11 +141,24 @@ const ActivityItem = ({
 const ListItem = styled.li`
   display: flex;
   justify-content: space-between;
-  min-width: 350px;
-  max-width: 450px;
 
   flex-wrap: wrap;
   margin: 2px;
+
+  @media (min-width: 600px) {
+    min-width: 350px;
+    max-width: 450px;
+  }
+`
+const ActivityTitle = styled.div`
+  display: flex;
+  align-items: center;
+  flex: 1 1 65%;
+  justify-content: flex-end;
+
+  @media (max-width: 500px) {
+    flex: 1 1 50%;
+  }
 `
 
 export default ActivityItem

@@ -4,19 +4,20 @@ import { useRef, useState } from "react"
 import ActivityItem from "./activity-item"
 import UseActivities, { Activity } from "./useActivities"
 
-const EditActivities = () => {
+export const Activities = () => {
   const {
     activities,
     addActivity,
     editActivity,
     deleteActivity,
     checkActivity,
+    repeatActivityToday,
   } = UseActivities()
   const [title, setTitle] = useState<string>("")
   const titleText = useRef(null)
 
   const saveActivity = () => {
-    const activity = { title, done: false, priority: 1 }
+    const activity = { title }
     addActivity(activity)
     setTitle("")
   }
@@ -29,7 +30,7 @@ const EditActivities = () => {
     return activities
       .map((a) => ({
         ...a,
-        date: dayjs(a.created_at).format("DD.MM.YYYY"),
+        date: dayjs(a.done_at ?? a.created_at).format("DD/MM/YYYY"),
       }))
       .reduce((prev, curr) => {
         const atDate = prev.find((d) => d.date === curr.date)
@@ -46,18 +47,23 @@ const EditActivities = () => {
       }, [] as ActivitiesGroupedByDate)
   }
 
-  const Activities = ({
+  const ActivitiesList = ({
     activities,
   }: {
     activities: ActivitiesGroupedByDate
   }) => {
+    const displayDate = (date: string) => {
+      const today = dayjs().format("DD/MM/YYYY")
+      return date === today ? "Today" : date
+    }
+
     return (
       <>
         {activities.map((a) => {
           return (
             <div key={a.date}>
-              <h3>{a.date}</h3>
-              <ul style={{ listStyleType: "none", padding: 0, minWidth: 500 }}>
+              <h5>{displayDate(a.date)}</h5>
+              <ul style={{ listStyleType: "none", padding: 0 }}>
                 {a.activities.map((activity: Activity) => (
                   <ActivityItem
                     key={activity.id}
@@ -65,6 +71,7 @@ const EditActivities = () => {
                     checkActivity={checkActivity}
                     deleteActivity={deleteActivity}
                     editActivity={editActivity}
+                    repeatActivityToday={repeatActivityToday}
                   ></ActivityItem>
                 ))}
               </ul>
@@ -110,17 +117,17 @@ const EditActivities = () => {
           alignItems="stretch"
           style={{ display: "flex", flexDirection: "column" }}
         >
-          <Activities
+          <ActivitiesList
             activities={groupActivities(activitiesNotDone)}
-          ></Activities>
+          ></ActivitiesList>
         </Grid>
       </Grid>
       <Grid item xs={12} md={5} lg={5}>
         <h3>Daily Log</h3>
-        <Activities activities={groupActivities(activitiesDone)}></Activities>
+        <ActivitiesList
+          activities={groupActivities(activitiesDone)}
+        ></ActivitiesList>
       </Grid>
     </Grid>
   )
 }
-
-export default EditActivities

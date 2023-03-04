@@ -10,8 +10,9 @@ interface ActivityDbGateway {
   getAllDone: () => Promise<ActivityResponse[]>
   getAllNotDone: () => Promise<ActivityResponse[]>
   addActivity: (activity: ActivityAddRequest) => Promise<number>
-  deleteActivity: (activityId: number) => void
-  toggleActivity: (activityId: number) => void
+  deleteActivity: (id: number) => void
+  toggleActivity: (id: number) => void
+  repeatActivityToday: (id: number) => void
 }
 
 export default ActivityDbGateway

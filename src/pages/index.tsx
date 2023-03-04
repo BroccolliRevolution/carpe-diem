@@ -1,6 +1,6 @@
-import EditActivities from "@/components/activities/edit-activities"
+import { Activities } from "@/components/activities/activities"
 
 function Home() {
-  return <EditActivities />
+  return <Activities />
 }
 export default Home

@@ -15,4 +15,5 @@ export default async function handler(
 
   await activitiesRepo.editActivity(data)
   res.json(`edited id ${id}`)
+  return
 }

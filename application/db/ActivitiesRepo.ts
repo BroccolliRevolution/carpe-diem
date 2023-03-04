@@ -11,7 +11,7 @@ export const activitiesRepo: ActivityDbGateway = {
   },
   getAllActivities: async () => {
     return await prisma.activity.findMany({
-      orderBy: { created_at: "desc" },
+      orderBy: [{ done_at: "desc" }, { created_at: "desc" }],
     })
   },
   getAllDone: async () => {
@@ -36,16 +36,26 @@ export const activitiesRepo: ActivityDbGateway = {
     const a = await prisma.activity.create({ data: activity })
     return a.id
   },
-  deleteActivity: async (activityId: number) => {
-    await prisma.activity.delete({ where: { id: activityId } })
+  deleteActivity: async (id: number) => {
+    await prisma.activity.delete({ where: { id: id } })
   },
-  toggleActivity: async (activityId: number) => {
+  toggleActivity: async (id: number) => {
     const activity = await prisma.activity.findFirst({
-      where: { id: activityId },
+      where: { id },
     })
     await prisma.activity.update({
-      where: { id: activityId },
-      data: { done: !activity?.done },
+      where: { id },
+      data: {
+        done: !activity?.done,
+        done_at: !activity?.done ? new Date() : null,
+      },
+    })
+  },
+
+  repeatActivityToday: async (id: number) => {
+    await prisma.activity.update({
+      where: { id },
+      data: { created_at: new Date(), done: false, done_at: null },
     })
   },
 }
