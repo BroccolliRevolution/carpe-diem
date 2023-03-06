@@ -4,7 +4,7 @@ import { activitiesRepo } from "./../../../../application/db/ActivitiesRepo"
 export type ActivityData = { title: string; done: boolean }
 
 export default async function handler(
-  req: NextApiRequest,
+  _: NextApiRequest,
   res: NextApiResponse<any>
 ) {
   const activities = await activitiesRepo.getAllActivities()

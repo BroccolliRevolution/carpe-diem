@@ -1,3 +1,4 @@
+import { Activity } from "@prisma/client"
 import { prisma } from "@/db"
 import { ActivityAddRequest, ActivityEditRequest } from "core/activity"
 import ActivityDbGateway from "core/DbGateway/ActivityDbGateway"
@@ -10,25 +11,10 @@ export const activitiesRepo: ActivityDbGateway = {
     })
   },
   getAllActivities: async () => {
-    return await prisma.activity.findMany({
-      orderBy: [{ done_at: "desc" }, { created_at: "desc" }],
-    })
-  },
-  getAllDone: async () => {
-    return await prisma.activity.findMany({
-      where: {
-        done: true,
-      },
-      orderBy: { created_at: "desc" },
-    })
-  },
-  getAllNotDone: async () => {
-    return await prisma.activity.findMany({
-      where: {
-        done: false,
-      },
-      orderBy: { created_at: "desc" },
-    })
+    // TODO @Peto: can I use some prisma features like custom fields etc.
+    return await prisma.$queryRaw`
+    SELECT * FROM "Activity" 
+    ORDER BY to_char(done_at,'dd/MM/yyyy') DESC, to_char(created_at,'dd/MM/yyyy') DESC, priority DESC;`
   },
   addActivity: async (activity: ActivityAddRequest) => {
     // TODO @Peto: unit test this -> also use something like Required<Omit<ActivityData, 'id'>>

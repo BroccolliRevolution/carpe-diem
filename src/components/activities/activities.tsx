@@ -1,6 +1,7 @@
 import { Button, Grid, TextField } from "@mui/material"
-import dayjs from "dayjs"
+
 import { useRef, useState } from "react"
+import { formatDate, today } from "../common/dateTime"
 import ActivityItem from "./activity-item"
 import UseActivities, { Activity } from "./useActivities"
 
@@ -30,7 +31,7 @@ export const Activities = () => {
     return activities
       .map((a) => ({
         ...a,
-        date: dayjs(a.done_at ?? a.created_at).format("DD/MM/YYYY"),
+        date: formatDate(a.done_at ?? a.created_at),
       }))
       .reduce((prev, curr) => {
         const atDate = prev.find((d) => d.date === curr.date)
@@ -53,8 +54,8 @@ export const Activities = () => {
     activities: ActivitiesGroupedByDate
   }) => {
     const displayDate = (date: string) => {
-      const today = dayjs().format("DD/MM/YYYY")
-      return date === today ? "Today" : date
+      const todaysDate = today()
+      return date === todaysDate ? "Today" : date
     }
 
     return (
@@ -83,7 +84,7 @@ export const Activities = () => {
   }
 
   return (
-    <Grid container spacing={3} height={"100%"}>
+    <Grid container spacing={3} height={"100%"} style={{ padding: 20 }}>
       <Grid item xs={12} md={7} lg={7}>
         <h3>Activities</h3>
         <Grid container>

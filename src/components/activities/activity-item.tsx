@@ -1,11 +1,11 @@
 import styled from "@emotion/styled"
 import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
-import SaveIcon from "@mui/icons-material/Save"
 import RestartAltIcon from "@mui/icons-material/RestartAlt"
-import { Button, Checkbox, IconButton, TextField, Tooltip } from "@mui/material"
-import dayjs from "dayjs"
+import SaveIcon from "@mui/icons-material/Save"
+import { Checkbox, IconButton, TextField, Tooltip } from "@mui/material"
 import { useRef, useState } from "react"
+import { formatDate, formatTime, today } from "../common/dateTime"
 import { Activity, EditType } from "./useActivities"
 
 type Props = {
@@ -27,10 +27,7 @@ const ActivityItem = ({
   const [editing, setEditing] = useState(false)
   const titleText = useRef(null)
 
-  // TODO @Peto: "DD/MM/YYYY" extract this format somewhere out, activities component use this as well
-  const isTodaysActivity =
-    dayjs(activity.created_at).format("DD/MM/YYYY") ===
-    dayjs().format("DD/MM/YYYY")
+  const isTodaysActivity = formatDate(activity.created_at) === today()
 
   return (
     <ListItem
@@ -99,9 +96,7 @@ const ActivityItem = ({
           <Tooltip
             placement="top"
             arrow={true}
-            title={dayjs(activity?.done_at ?? activity.created_at).format(
-              "HH:mm:ss"
-            )}
+            title={formatTime(activity?.done_at ?? activity.created_at)}
           >
             <span>{activity.title}</span>
           </Tooltip>
