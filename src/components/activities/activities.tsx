@@ -1,3 +1,4 @@
+import styled from "@emotion/styled"
 import { Button, Grid, TextField } from "@mui/material"
 
 import { useCallback, useMemo, useRef, useState } from "react"
@@ -136,7 +137,7 @@ export const Activities = () => {
   }
 
   return (
-    <Grid container spacing={3} height={"100%"} style={{ padding: 20 }}>
+    <GridStyled container spacing={3} height={"100%"}>
       <Grid item xs={12} md={7} lg={7}>
         <h3>Activities</h3>
         <Grid container>
@@ -177,6 +178,12 @@ export const Activities = () => {
         <h3>Daily Log</h3>
         <ActivitiesList activities={activitiesDone}></ActivitiesList>
       </Grid>
-    </Grid>
+    </GridStyled>
   )
 }
+
+const GridStyled = styled(Grid)`
+  @media (min-width: 600px) {
+    padding: 20px;
+  }
+`
