@@ -3,7 +3,7 @@ import DeleteIcon from "@mui/icons-material/Delete"
 import EditIcon from "@mui/icons-material/Edit"
 import RestartAltIcon from "@mui/icons-material/RestartAlt"
 import SaveIcon from "@mui/icons-material/Save"
-import { Checkbox, IconButton, TextField, Tooltip } from "@mui/material"
+import { Checkbox, IconButton, Link, TextField, Tooltip } from "@mui/material"
 import { useRef, useState } from "react"
 import { formatDate, formatTime, today } from "../common/dateTime"
 import { Activity, EditType } from "./useActivities"
@@ -14,6 +14,44 @@ type Props = {
   editActivity: (data: EditType) => void
   checkActivity: (activity: Activity) => void
   repeatActivityToday: (activity: Activity) => void
+}
+
+const ChoppedTitle = ({ title }: { title: string }) => {
+  const maxLength = 80
+  const [fullText, setFullText] = useState(false)
+
+  if (title.length <= maxLength) return <>{title}</>
+
+  if (fullText)
+    return (
+      <>
+        {title}{" "}
+        <Link
+          onClick={(e) => {
+            e.preventDefault()
+            setFullText(false)
+          }}
+          href="#"
+        >
+          Show Less
+        </Link>
+      </>
+    )
+
+  return (
+    <>
+      {title.substring(0, maxLength)}{" "}
+      <Link
+        onClick={(e) => {
+          e.preventDefault()
+          setFullText(true)
+        }}
+        href="#"
+      >
+        ...
+      </Link>
+    </>
+  )
 }
 
 const ActivityItem = ({
@@ -98,7 +136,9 @@ const ActivityItem = ({
             arrow={true}
             title={formatTime(activity?.done_at ?? activity.created_at)}
           >
-            <span>{activity.title}</span>
+            <span style={{ padding: 5 }}>
+              <ChoppedTitle title={activity.title} />
+            </span>
           </Tooltip>
         </ActivityTitle>
       ) : (
