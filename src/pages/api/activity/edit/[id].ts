@@ -11,9 +11,6 @@ export default async function handler(
 
   if (!id) return
 
-  console.log(data)
-
   await activitiesRepo.editActivity(data)
   res.json(`edited id ${id}`)
-  return
 }

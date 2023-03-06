@@ -16,6 +16,7 @@ export type ActivityEditRequest = {
   id: number
   title?: string
   done?: boolean
+  priority?: number
 }
 export type ActivityAddRequest = {
   title: string

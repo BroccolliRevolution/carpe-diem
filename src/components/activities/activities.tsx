@@ -1,6 +1,6 @@
 import { Button, Grid, TextField } from "@mui/material"
 
-import { useRef, useState } from "react"
+import { useCallback, useMemo, useRef, useState } from "react"
 import { formatDate, today } from "../common/dateTime"
 import ActivityItem from "./activity-item"
 import UseActivities, { Activity } from "./useActivities"
@@ -23,11 +23,11 @@ export const Activities = () => {
     setTitle("")
   }
 
-  const activitiesDone = activities.filter((a) => a.done)
-  const activitiesNotDone = activities.filter((a) => !a.done)
-
   type ActivitiesGroupedByDate = { date: string; activities: Activity[] }[]
-  const groupActivities = (activities: Activity[]) => {
+
+  // TODO @Peto: maybe useCallback and useMemo in this component
+
+  const groupActivities = useCallback((activities: Activity[]) => {
     return activities
       .map((a) => ({
         ...a,
@@ -46,6 +46,56 @@ export const Activities = () => {
           { ...atDate, activities: [...atDate.activities, curr] },
         ]
       }, [] as ActivitiesGroupedByDate)
+  }, [])
+
+  const activitiesDone = useMemo(
+    () => groupActivities(activities.filter((a) => a.done)),
+    [activities, groupActivities]
+  )
+  const activitiesNotDone = useMemo(
+    () => groupActivities(activities.filter((a) => !a.done)),
+    [activities, groupActivities]
+  )
+
+  const editPriority = (activity: Activity, direction: "UP" | "DOWN") => {
+    // debugger
+    const index = activitiesNotDone[0].activities.indexOf(activity)
+    const indexColliding = direction === "UP" ? index - 1 : index + 1
+    if (indexColliding < 0) return
+    if (indexColliding >= activitiesNotDone[0].activities.length) return
+    const collidingActivity = activitiesNotDone[0].activities[indexColliding]
+    if (direction === "UP") {
+      editActivity({
+        activity: collidingActivity,
+        activityData: {
+          id: collidingActivity.id,
+          priority: collidingActivity.priority - 1,
+        },
+      })
+      editActivity({
+        activity,
+        activityData: {
+          id: activity.id,
+          priority: activity.priority + 1,
+        },
+      })
+    }
+    if (direction === "DOWN") {
+      editActivity({
+        activity: collidingActivity,
+        activityData: {
+          id: collidingActivity.id,
+          priority: collidingActivity.priority + 1,
+        },
+      })
+      editActivity({
+        activity,
+        activityData: {
+          id: activity.id,
+          priority: activity.priority - 1,
+        },
+      })
+    }
   }
 
   const ActivitiesList = ({
@@ -60,7 +110,7 @@ export const Activities = () => {
 
     return (
       <>
-        {activities.map((a) => {
+        {activities.map((a, i) => {
           return (
             <div key={a.date}>
               <h5>{displayDate(a.date)}</h5>
@@ -73,6 +123,8 @@ export const Activities = () => {
                     deleteActivity={deleteActivity}
                     editActivity={editActivity}
                     repeatActivityToday={repeatActivityToday}
+                    editPriority={editPriority}
+                    checkable={i < 2}
                   ></ActivityItem>
                 ))}
               </ul>
@@ -118,16 +170,12 @@ export const Activities = () => {
           alignItems="stretch"
           style={{ display: "flex", flexDirection: "column" }}
         >
-          <ActivitiesList
-            activities={groupActivities(activitiesNotDone)}
-          ></ActivitiesList>
+          <ActivitiesList activities={activitiesNotDone}></ActivitiesList>
         </Grid>
       </Grid>
       <Grid item xs={12} md={5} lg={5}>
         <h3>Daily Log</h3>
-        <ActivitiesList
-          activities={groupActivities(activitiesDone)}
-        ></ActivitiesList>
+        <ActivitiesList activities={activitiesDone}></ActivitiesList>
       </Grid>
     </Grid>
   )
