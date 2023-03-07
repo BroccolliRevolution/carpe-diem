@@ -113,7 +113,7 @@ const ActivityItem = ({
           <MoreHorizIcon />
         </IconButton>
 
-        {isTodaysActivity && (
+        {isTodaysActivity && !activity.done && (
           <>
             <IconButton
               size="small"
