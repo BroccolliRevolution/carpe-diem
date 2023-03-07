@@ -191,10 +191,10 @@ const UseActivities = () => {
       queryClient.setQueryData(["activities"], newData)
       return { newData, activity }
     },
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       // Invalidate and refetch
       queryClient.setQueryData(["activities"], data)
-      queryClient.invalidateQueries({ queryKey: ["activities"] })
+      // queryClient.invalidateQueries({ queryKey: ["activities", variables.id] })
     },
   }).mutate
 
