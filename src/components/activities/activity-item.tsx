@@ -1,12 +1,11 @@
 import styled from "@emotion/styled"
-import DeleteIcon from "@mui/icons-material/Delete"
-import EditIcon from "@mui/icons-material/Edit"
-import RestartAltIcon from "@mui/icons-material/RestartAlt"
-import SaveIcon from "@mui/icons-material/Save"
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward"
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward"
+import DeleteIcon from "@mui/icons-material/Delete"
+import EditIcon from "@mui/icons-material/Edit"
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
-import CloseIcon from "@mui/icons-material/Close"
+import RestartAltIcon from "@mui/icons-material/RestartAlt"
+import SaveIcon from "@mui/icons-material/Save"
 
 import {
   Badge,
@@ -84,7 +83,6 @@ const ActivityItem = ({
   const titleText = useRef(null)
 
   const isTodaysActivity = formatDate(activity.created_at) === today()
-  const randNum = Math.floor(Math.random() * 10) + 1
 
   return (
     <ListItem
@@ -106,14 +104,40 @@ const ActivityItem = ({
             }}
           />
         )}
+        <IconButton
+          size="small"
+          aria-label="priority down"
+          component="label"
+          onClick={() => setShowOptions(!showOptions)}
+        >
+          <MoreHorizIcon />
+        </IconButton>
+
+        {isTodaysActivity && (
+          <>
+            <IconButton
+              size="small"
+              aria-label="priority up"
+              component="label"
+              onClick={() => editPriority(activity, "UP")}
+            >
+              <ArrowUpwardIcon />
+            </IconButton>
+            <IconButton
+              size="small"
+              aria-label="priority down"
+              component="label"
+              onClick={() => editPriority(activity, "DOWN")}
+            >
+              <ArrowDownwardIcon />
+            </IconButton>
+          </>
+        )}
 
         <div
           style={{
             display: showOptions ? "flex" : "none",
             position: "absolute",
-            width: 80,
-            height: 80,
-            background: "yellow",
             zIndex: 100,
           }}
         >
@@ -138,45 +162,8 @@ const ActivityItem = ({
             >
               <EditIcon />
             </IconButton>
-            <IconButton
-              size="small"
-              aria-label="priority up"
-              component="label"
-              onClick={() => {
-                // const data = {
-                //   activity,
-                //   activityData: {
-                //     id: activity.id,
-                //     priority: activity.priority + randNum,
-                //   },
-                // }
-                // editActivity(data)
-                editPriority(activity, "UP")
-              }}
-            >
-              <ArrowUpwardIcon />
-            </IconButton>
-            <IconButton
-              size="small"
-              aria-label="priority down"
-              component="label"
-              onClick={() => {
-                editPriority(activity, "DOWN")
-              }}
-            >
-              <ArrowDownwardIcon />
-            </IconButton>
           </Card>
         </div>
-
-        <IconButton
-          size="small"
-          aria-label="priority down"
-          component="label"
-          onClick={() => setShowOptions(!showOptions)}
-        >
-          <MoreHorizIcon />
-        </IconButton>
 
         {!isTodaysActivity && (
           <Tooltip placement="top" arrow={true} title="repeat again today">

@@ -80,6 +80,17 @@ const UseActivities = () => {
     })
   }
 
+  const bulkRepeatTodayMutation = async (activities: Activity[]) => {
+    await fetch(`/api/activity/bulk-repeat`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(activities.map((a) => a.id)),
+    })
+  }
+
   const deleteActivityMutation = async (activity: Activity) => {
     await fetch(`/api/activity/delete/${activity.id}`, {
       method: "DELETE",
@@ -156,6 +167,15 @@ const UseActivities = () => {
     },
   }).mutate
 
+  const bulkRepeatToday = useMutation({
+    mutationFn: bulkRepeatTodayMutation,
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["activities"],
+      })
+    },
+  }).mutate
+
   return {
     activities,
     addActivity,
@@ -163,6 +183,7 @@ const UseActivities = () => {
     editActivity,
     checkActivity,
     repeatActivityToday,
+    bulkRepeatToday,
   }
 }
 

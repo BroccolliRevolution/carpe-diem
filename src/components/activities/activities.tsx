@@ -1,5 +1,6 @@
 import styled from "@emotion/styled"
 import { Button, Grid, TextField } from "@mui/material"
+import RestartAltIcon from "@mui/icons-material/RestartAlt"
 
 import { useCallback, useMemo, useRef, useState } from "react"
 import { formatDate, today } from "../common/dateTime"
@@ -14,6 +15,7 @@ export const Activities = () => {
     deleteActivity,
     checkActivity,
     repeatActivityToday,
+    bulkRepeatToday,
   } = UseActivities()
   const [title, setTitle] = useState<string>("")
   const titleText = useRef(null)
@@ -49,6 +51,8 @@ export const Activities = () => {
       }, [] as ActivitiesGroupedByDate)
   }, [])
 
+  console.log("RERENDER")
+
   const activitiesDone = useMemo(
     () => groupActivities(activities.filter((a) => a.done)),
     [activities, groupActivities]
@@ -70,14 +74,14 @@ export const Activities = () => {
         activity: collidingActivity,
         activityData: {
           id: collidingActivity.id,
-          priority: collidingActivity.priority - 1,
+          priority: activity.priority,
         },
       })
       editActivity({
         activity,
         activityData: {
           id: activity.id,
-          priority: activity.priority + 1,
+          priority: collidingActivity.priority,
         },
       })
     }
@@ -86,14 +90,14 @@ export const Activities = () => {
         activity: collidingActivity,
         activityData: {
           id: collidingActivity.id,
-          priority: collidingActivity.priority + 1,
+          priority: activity.priority,
         },
       })
       editActivity({
         activity,
         activityData: {
           id: activity.id,
-          priority: activity.priority - 1,
+          priority: collidingActivity.priority,
         },
       })
     }
@@ -114,7 +118,22 @@ export const Activities = () => {
         {activities.map((a, i) => {
           return (
             <div key={a.date}>
-              <h5>{displayDate(a.date)}</h5>
+              <div
+                style={{ display: "flex", height: 60, alignItems: "center" }}
+              >
+                <h5 style={{ marginRight: 20 }}>{displayDate(a.date)}</h5>{" "}
+                {i > 0 && (
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      const activitiesToRepeat = activities[i]
+                      bulkRepeatToday(activitiesToRepeat.activities)
+                    }}
+                  >
+                    <RestartAltIcon />
+                  </Button>
+                )}
+              </div>
               <ul style={{ listStyleType: "none", padding: 0 }}>
                 {a.activities.map((activity: Activity) => (
                   <ActivityItem

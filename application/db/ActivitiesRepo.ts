@@ -2,6 +2,7 @@ import { Activity } from "@prisma/client"
 import { prisma } from "@/db"
 import { ActivityAddRequest, ActivityEditRequest } from "core/activity"
 import ActivityDbGateway from "core/DbGateway/ActivityDbGateway"
+import dayjs from "dayjs"
 
 export const activitiesRepo: ActivityDbGateway = {
   editActivity: async (data: ActivityEditRequest) => {
@@ -13,18 +14,24 @@ export const activitiesRepo: ActivityDbGateway = {
   getAllActivities: async () => {
     return await prisma.$queryRaw`
     SELECT * FROM "Activity" 
-    ORDER BY to_char(done_at,'dd/MM/yyyy') DESC, to_char(created_at,'dd/MM/yyyy') DESC, priority DESC, created_at DESC;`
+    ORDER BY to_char(done_at,'dd/MM/yyyy') DESC, to_char(created_at,'dd/MM/yyyy') DESC, priority DESC;`
   },
   addActivity: async (activity: ActivityAddRequest) => {
     // TODO @Peto: unit test this -> also use something like Required<Omit<ActivityData, 'id'>>
     // TODO @Peto: maybe check for the type here and throw an error
 
+    // TODO @Peto: refator - this is used multiple times here
     const last = await prisma.activity.findFirst({
       where: {
-        done: false,
+        AND: {
+          done: false,
+          created_at: {
+            gte: new Date(dayjs().format("YYYY-MM-DD")),
+          },
+        },
       },
       orderBy: {
-        created_at: "desc",
+        priority: "desc",
       },
     })
     const a = await prisma.activity.create({
@@ -50,11 +57,54 @@ export const activitiesRepo: ActivityDbGateway = {
     const activity = await prisma.activity.findFirst({
       where: { id },
     })
+
+    // TODO @Peto: maybe use this even for update priority!
+
+    if (activity?.done) {
+      await prisma.activity.updateMany({
+        where: {
+          created_at: {
+            gte: new Date(dayjs().format("YYYY-MM-DD")),
+          },
+        },
+        data: { priority: { decrement: 1 } },
+      })
+    } else {
+      await prisma.activity.updateMany({
+        where: {
+          AND: {
+            created_at: {
+              gte: new Date(dayjs().format("YYYY-MM-DD")),
+            },
+            priority: {
+              lte: activity?.priority,
+            },
+          },
+        },
+        data: { priority: { increment: 1 } },
+      })
+    }
+
+    const last = await prisma.activity.findFirst({
+      where: {
+        AND: {
+          done: false,
+          created_at: {
+            gte: new Date(dayjs().format("YYYY-MM-DD")),
+          },
+        },
+      },
+      orderBy: {
+        priority: "desc",
+      },
+    })
+
     await prisma.activity.update({
       where: { id },
       data: {
         done: !activity?.done,
-        done_at: !activity?.done ? activity?.created_at : null,
+        done_at: !activity?.done ? new Date() : null,
+        priority: activity?.done ? (last?.priority ?? 0) + 1 : 0,
       },
     })
   },
@@ -68,10 +118,15 @@ export const activitiesRepo: ActivityDbGateway = {
 
     const last = await prisma.activity.findFirst({
       where: {
-        done: false,
+        AND: {
+          done: false,
+          created_at: {
+            gte: new Date(dayjs().format("YYYY-MM-DD")),
+          },
+        },
       },
       orderBy: {
-        created_at: "desc",
+        priority: "desc",
       },
     })
 
@@ -87,9 +142,50 @@ export const activitiesRepo: ActivityDbGateway = {
 
     if (activity.done) return
     await prisma.activity.delete({ where: { id } })
-    // await prisma.activity.update({
-    //   where: { id },
-    //   data: { created_at: new Date(), done: false, done_at: null },
-    // })
+  },
+  bulkRepeatToday: async (ids: number[]) => {
+    const activities = await prisma.activity.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    })
+
+    const last = await prisma.activity.findFirst({
+      where: {
+        AND: {
+          done: false,
+          created_at: {
+            gte: new Date(dayjs().format("YYYY-MM-DD")),
+          },
+        },
+      },
+      orderBy: {
+        priority: "desc",
+      },
+    })
+
+    const activitiesToCreate = activities.map(
+      ({ id, created_at, ...rest }, i) => {
+        return {
+          ...rest,
+          priority: (last?.priority ?? 0) + i + 1,
+          done: false,
+          done_at: null,
+        }
+      }
+    )
+
+    await prisma.activity.deleteMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    })
+    await prisma.activity.createMany({
+      data: activitiesToCreate,
+    })
   },
 }

@@ -11,6 +11,7 @@ interface ActivityDbGateway {
   deleteActivity: (id: number) => void
   toggleActivity: (id: number) => void
   repeatActivityToday: (id: number) => void
+  bulkRepeatToday: (ids: number[]) => void
 }
 
 export default ActivityDbGateway
