@@ -51,7 +51,7 @@ export const Activities = () => {
       }, [] as ActivitiesGroupedByDate)
   }, [])
 
-  console.log("RERENDER")
+  // console.log("RERENDER")
 
   const activitiesDone = useMemo(
     () => groupActivities(activities.filter((a) => a.done)),
@@ -117,29 +117,14 @@ export const Activities = () => {
 
     return (
       <>
-        {activities.map((a, i) => {
+        {activities.map((group, i) => {
           return (
-            <>
-              {i > 0 && (
-                <Link
-                  key={i}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    setShowMore(!showMore)
-                  }}
-                  href="#"
-                >
-                  {showMore ? "Show Less" : "Show More Days"}
-                </Link>
-              )}
-              <div
-                key={a.date}
-                style={{ display: i > 0 && !showMore ? "none" : undefined }}
-              >
+            <div key={i + group.date}>
+              <div style={{ display: i > 0 && !showMore ? "none" : undefined }}>
                 <div
                   style={{ display: "flex", height: 60, alignItems: "center" }}
                 >
-                  <h5 style={{ marginRight: 20 }}>{displayDate(a.date)}</h5>{" "}
+                  <h5 style={{ marginRight: 20 }}>{displayDate(group.date)}</h5>{" "}
                   {i > 0 && (
                     <Button
                       variant="outlined"
@@ -153,9 +138,9 @@ export const Activities = () => {
                   )}
                 </div>
                 <ul style={{ listStyleType: "none", padding: 0 }}>
-                  {a.activities.map((activity: Activity) => (
+                  {group.activities.map((activity: Activity) => (
                     <ActivityItem
-                      key={activity.id}
+                      key={activity.id + activity.title}
                       activity={activity}
                       checkActivity={checkActivity}
                       deleteActivity={deleteActivity}
@@ -167,7 +152,18 @@ export const Activities = () => {
                   ))}
                 </ul>
               </div>
-            </>
+              {i === 0 && (
+                <Link
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setShowMore(!showMore)
+                  }}
+                  href="#"
+                >
+                  {showMore ? "Show Less" : "Show More Days"}
+                </Link>
+              )}
+            </div>
           )
         })}
       </>

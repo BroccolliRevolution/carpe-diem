@@ -118,22 +118,23 @@ const UseActivities = () => {
     onMutate: async (activity) => {
       // Cancel any outgoing refetches
       // (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries({
+        queryKey: ["activities"],
+      })
 
       const previous = queryClient.getQueryData(["activities"]) as Activity[]
       const id = previous[0].id
       const priority = previous[0].id * 1000
       const a = { ...activity, id, priority }
 
-      await queryClient.cancelQueries({
-        queryKey: ["activities", a],
-      })
-
       // Snapshot the previous value
-      const newData = [...previous, a]
+      const newData = [a, ...previous]
+
+      console.log(newData)
 
       // Optimistically update to the new value
       queryClient.setQueryData(["activities"], newData)
-      return { newData, activity }
+      return { newData, a }
     },
     onSettled: () => {
       queryClient.invalidateQueries({
@@ -163,6 +164,11 @@ const UseActivities = () => {
     onMutate: async (activity) => {
       // Cancel any outgoing refetches
       // (so they don't overwrite our optimistic update)
+
+      // TODO @Peto: glithes here
+
+      if (activity.done) return
+
       await queryClient.cancelQueries({
         queryKey: ["activities", activity.id],
       })
