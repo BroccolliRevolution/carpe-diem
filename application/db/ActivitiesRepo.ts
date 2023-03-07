@@ -1,4 +1,3 @@
-import { Activity } from "@prisma/client"
 import { prisma } from "@/db"
 import { ActivityAddRequest, ActivityEditRequest } from "core/activity"
 import ActivityDbGateway from "core/DbGateway/ActivityDbGateway"
@@ -12,9 +11,12 @@ export const activitiesRepo: ActivityDbGateway = {
     })
   },
   getAllActivities: async () => {
+    const limitDate = dayjs().subtract(30, "day").format("YYYY-MM-DD")
+
     return await prisma.$queryRaw`
     SELECT * FROM "Activity" 
-    ORDER BY to_char(done_at,'dd/MM/yyyy') DESC, to_char(created_at,'dd/MM/yyyy') DESC, priority DESC;`
+    WHERE created_at >= ${limitDate}::date
+    ORDER BY done_at DESC, to_char(created_at,'dd/MM/yyyy') DESC, priority DESC;`
   },
   addActivity: async (activity: ActivityAddRequest) => {
     // TODO @Peto: unit test this -> also use something like Required<Omit<ActivityData, 'id'>>
