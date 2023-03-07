@@ -183,18 +183,18 @@ const UseActivities = () => {
 
       // Snapshot the previous value
       const previous = queryClient.getQueryData(["activities"]) as Activity[]
-      activity.done = !activity.done
+      const a = { ...activity, done: !activity.done }
 
-      const newData = previous.map((p) => (p.id === activity.id ? activity : p))
+      const newData = previous.map((p) => (p.id === activity.id ? a : p))
 
       // Optimistically update to the new value
       queryClient.setQueryData(["activities"], newData)
       return { newData, activity }
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       // Invalidate and refetch
       queryClient.setQueryData(["activities"], data)
-      // queryClient.invalidateQueries({ queryKey: ["activities", variables.id] })
+      // queryClient.invalidateQueries({ queryKey: ["activities"] })
     },
   }).mutate
 
