@@ -122,6 +122,7 @@ export const Activities = () => {
             <>
               {i > 0 && (
                 <Link
+                  key={i}
                   onClick={(e) => {
                     e.preventDefault()
                     setShowMore(!showMore)

@@ -1,3 +1,4 @@
+import { clear } from "console"
 import { useMutation, useQuery, useQueryClient } from "react-query"
 
 export type Activity = {
@@ -110,9 +111,34 @@ const UseActivities = () => {
 
   const addActivity = useMutation({
     mutationFn: addActivityMutation,
-    onSuccess: () => {
-      // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: ["activities"] })
+    // onSuccess: () => {
+    //   // Invalidate and refetch
+    //   queryClient.invalidateQueries({ queryKey: ["activities"] })
+    // },
+    onMutate: async (activity) => {
+      // Cancel any outgoing refetches
+      // (so they don't overwrite our optimistic update)
+
+      const previous = queryClient.getQueryData(["activities"]) as Activity[]
+      const id = previous[0].id
+      const priority = previous[0].id * 1000
+      const a = { ...activity, id, priority }
+
+      await queryClient.cancelQueries({
+        queryKey: ["activities", a],
+      })
+
+      // Snapshot the previous value
+      const newData = [...previous, a]
+
+      // Optimistically update to the new value
+      queryClient.setQueryData(["activities"], newData)
+      return { newData, activity }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["activities"],
+      })
     },
   }).mutate
 
