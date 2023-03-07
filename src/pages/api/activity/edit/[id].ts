@@ -12,5 +12,6 @@ export default async function handler(
   if (!id) return
 
   await activitiesRepo.editActivity(data)
-  res.json(`edited id ${id}`)
+  const activities = await activitiesRepo.getAllActivities()
+  res.json(activities)
 }

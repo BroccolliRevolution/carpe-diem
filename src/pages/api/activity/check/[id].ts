@@ -9,5 +9,6 @@ export default async function handler(
   if (!id) return
 
   await activitiesRepo.toggleActivity(+id)
-  res.json(`edited id ${id}`)
+  const activities = await activitiesRepo.getAllActivities()
+  res.json(activities)
 }

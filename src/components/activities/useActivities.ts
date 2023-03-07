@@ -51,24 +51,28 @@ const UseActivities = () => {
   }
 
   const editActivityMutation = async ({ activity, activityData }: EditType) => {
-    await fetch(`/api/activity/edit/${activity.id}`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(activityData),
-    })
+    return (
+      await fetch(`/api/activity/edit/${activity.id}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(activityData),
+      })
+    ).json()
   }
 
   const checkActivityMutation = async (activity: Activity) => {
-    await fetch(`/api/activity/check/${activity.id}`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
+    return await (
+      await fetch(`/api/activity/check/${activity.id}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+    ).json()
   }
 
   const repeatActivityMutation = async (activity: Activity) => {
@@ -93,13 +97,15 @@ const UseActivities = () => {
   }
 
   const deleteActivityMutation = async (activity: Activity) => {
-    await fetch(`/api/activity/delete/${activity.id}`, {
-      method: "DELETE",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
+    return (
+      await fetch(`/api/activity/delete/${activity.id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+    ).json()
   }
 
   const activities =
@@ -145,16 +151,18 @@ const UseActivities = () => {
 
   const editActivity = useMutation({
     mutationFn: editActivityMutation,
-    onSuccess: () => {
-      // Invalidate and refetch
+
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["activities"] })
+      queryClient.setQueryData(["activities"], data)
     },
   }).mutate
 
   const deleteActivity = useMutation({
     mutationFn: deleteActivityMutation,
-    onSuccess: () => {
+    onSuccess: (data, variables, context) => {
       // Invalidate and refetch
+      console.log(data, variables, context)
       queryClient.invalidateQueries({ queryKey: ["activities"] })
     },
   }).mutate
@@ -165,7 +173,7 @@ const UseActivities = () => {
       // Cancel any outgoing refetches
       // (so they don't overwrite our optimistic update)
 
-      // TODO @Peto: glithes here
+      // TODO @Peto: glitches here
 
       if (activity.done) return
 
@@ -183,10 +191,10 @@ const UseActivities = () => {
       queryClient.setQueryData(["activities"], newData)
       return { newData, activity }
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["activities"],
-      })
+    onSuccess: (data) => {
+      // Invalidate and refetch
+      queryClient.setQueryData(["activities"], data)
+      queryClient.invalidateQueries({ queryKey: ["activities"] })
     },
   }).mutate
 
