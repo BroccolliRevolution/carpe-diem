@@ -1,5 +1,5 @@
 import styled from "@emotion/styled"
-import { Button, Grid, TextField } from "@mui/material"
+import { Button, Grid, Link, TextField } from "@mui/material"
 import RestartAltIcon from "@mui/icons-material/RestartAlt"
 
 import { useCallback, useMemo, useRef, useState } from "react"
@@ -17,7 +17,7 @@ export const Activities = () => {
     repeatActivityToday,
     bulkRepeatToday,
   } = UseActivities()
-  const [title, setTitle] = useState<string>("")
+  const [title, setTitle] = useState("")
   const titleText = useRef(null)
 
   const saveActivity = () => {
@@ -108,6 +108,8 @@ export const Activities = () => {
   }: {
     activities: ActivitiesGroupedByDate
   }) => {
+    const [showMore, setShowMore] = useState(false)
+
     const displayDate = (date: string) => {
       const todaysDate = today()
       return date === todaysDate ? "Today" : date
@@ -117,38 +119,54 @@ export const Activities = () => {
       <>
         {activities.map((a, i) => {
           return (
-            <div key={a.date}>
+            <>
+              {i > 0 && (
+                <Link
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setShowMore(!showMore)
+                  }}
+                  href="#"
+                >
+                  {showMore ? "Show Less" : "Show More Days"}
+                </Link>
+              )}
               <div
-                style={{ display: "flex", height: 60, alignItems: "center" }}
+                key={a.date}
+                style={{ display: i > 0 && !showMore ? "none" : undefined }}
               >
-                <h5 style={{ marginRight: 20 }}>{displayDate(a.date)}</h5>{" "}
-                {i > 0 && (
-                  <Button
-                    variant="outlined"
-                    onClick={() => {
-                      const activitiesToRepeat = activities[i]
-                      bulkRepeatToday(activitiesToRepeat.activities)
-                    }}
-                  >
-                    <RestartAltIcon />
-                  </Button>
-                )}
+                <div
+                  style={{ display: "flex", height: 60, alignItems: "center" }}
+                >
+                  <h5 style={{ marginRight: 20 }}>{displayDate(a.date)}</h5>{" "}
+                  {i > 0 && (
+                    <Button
+                      variant="outlined"
+                      onClick={() => {
+                        const activitiesToRepeat = activities[i]
+                        bulkRepeatToday(activitiesToRepeat.activities)
+                      }}
+                    >
+                      <RestartAltIcon />
+                    </Button>
+                  )}
+                </div>
+                <ul style={{ listStyleType: "none", padding: 0 }}>
+                  {a.activities.map((activity: Activity) => (
+                    <ActivityItem
+                      key={activity.id}
+                      activity={activity}
+                      checkActivity={checkActivity}
+                      deleteActivity={deleteActivity}
+                      editActivity={editActivity}
+                      repeatActivityToday={repeatActivityToday}
+                      editPriority={editPriority}
+                      checkable={i < 2}
+                    ></ActivityItem>
+                  ))}
+                </ul>
               </div>
-              <ul style={{ listStyleType: "none", padding: 0 }}>
-                {a.activities.map((activity: Activity) => (
-                  <ActivityItem
-                    key={activity.id}
-                    activity={activity}
-                    checkActivity={checkActivity}
-                    deleteActivity={deleteActivity}
-                    editActivity={editActivity}
-                    repeatActivityToday={repeatActivityToday}
-                    editPriority={editPriority}
-                    checkable={i < 2}
-                  ></ActivityItem>
-                ))}
-              </ul>
-            </div>
+            </>
           )
         })}
       </>

@@ -62,16 +62,9 @@ export const activitiesRepo: ActivityDbGateway = {
 
     // TODO @Peto: maybe use this even for update priority!
 
-    if (activity?.done) {
-      await prisma.activity.updateMany({
-        where: {
-          created_at: {
-            gte: new Date(dayjs().format("YYYY-MM-DD")),
-          },
-        },
-        data: { priority: { decrement: 1 } },
-      })
-    } else {
+    // TODO @Peto: extract code like this to use cases + test
+    // shift activities
+    if (!activity?.done) {
       await prisma.activity.updateMany({
         where: {
           AND: {
