@@ -11,6 +11,43 @@ export const activitiesRepo: ActivityDbGateway = {
       data,
     })
   },
+  editPriorityTop: async (id: number) => {
+    const activityMaxPriority = await prisma.activity.aggregate({
+      _max: {
+        priority: true,
+      },
+      where: {
+        AND: {
+          created_at: {
+            gte: today,
+          },
+          done: false,
+        },
+      },
+    })
+
+    await prisma.activity.updateMany({
+      where: {
+        created_at: {
+          gte: today,
+        },
+      },
+      data: {
+        priority: {
+          decrement: 1,
+        },
+      },
+    })
+
+    await prisma.activity.update({
+      where: {
+        id,
+      },
+      data: {
+        priority: activityMaxPriority._max.priority ?? 0,
+      },
+    })
+  },
   editPriority: async (id: number, priority: number) => {
     const newPriority = priority
 
@@ -31,8 +68,11 @@ export const activitiesRepo: ActivityDbGateway = {
           priority: true,
         },
         where: {
-          created_at: {
-            gte: today,
+          AND: {
+            created_at: {
+              gte: today,
+            },
+            done: false,
           },
         },
       })
@@ -68,13 +108,18 @@ export const activitiesRepo: ActivityDbGateway = {
           priority: true,
         },
         where: {
-          created_at: {
-            gte: today,
+          AND: {
+            created_at: {
+              gte: today,
+            },
+            done: false,
           },
         },
       })
 
       const maxPriority = activityMaxPriority._max.priority ?? 0
+
+      console.log(newPriority, maxPriority)
 
       if (newPriority > maxPriority) return
 

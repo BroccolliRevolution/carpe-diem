@@ -6,11 +6,9 @@ export default async function handler(
   res: NextApiResponse<any>
 ) {
   const { id } = req.query
-  const priority = req.body
-
   if (!id) return
 
-  await activitiesRepo.editPriority(+id, priority)
+  await activitiesRepo.editPriorityTop(+id)
   const activities = await activitiesRepo.getAllActivities()
   res.json(activities)
 }

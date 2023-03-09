@@ -6,6 +6,7 @@ import EditIcon from "@mui/icons-material/Edit"
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
 import RestartAltIcon from "@mui/icons-material/RestartAlt"
 import SaveIcon from "@mui/icons-material/Save"
+import AirlineStopsIcon from "@mui/icons-material/AirlineStops"
 
 import {
   Badge,
@@ -35,6 +36,7 @@ type Props = {
     priority: PropType<Activity, "priority">
   }) => void
   checkActivity: (activity: Activity) => void
+  editPriorityTop: (activity: Activity) => void
   repeatActivityToday: (activity: Activity) => void
 }
 
@@ -84,6 +86,7 @@ const ActivityItem = ({
   checkActivity,
   repeatActivityToday,
   editPriority,
+  editPriorityTop,
 }: Props) => {
   const [title, setTitle] = useState<string>(activity.title)
   const [editing, setEditing] = useState(false)
@@ -180,6 +183,17 @@ const ActivityItem = ({
             >
               <EditIcon />
             </IconButton>
+
+            {isTodaysActivity && !activity.done && (
+              <IconButton
+                size="small"
+                aria-label="top priority"
+                component="label"
+                onClick={() => editPriorityTop(activity)}
+              >
+                <AirlineStopsIcon />
+              </IconButton>
+            )}
           </Card>
         </div>
 

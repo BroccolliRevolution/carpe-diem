@@ -19,6 +19,7 @@ export const Activities = () => {
     repeatActivityToday,
     bulkRepeatToday,
     editPriority,
+    editPriorityTop,
   } = UseActivities()
 
   type ActivitiesGroupedByDate = { date: string; activities: Activity[] }[]
@@ -91,6 +92,7 @@ export const Activities = () => {
                       editActivity={editActivity}
                       repeatActivityToday={repeatActivityToday}
                       editPriority={editPriority}
+                      editPriorityTop={editPriorityTop}
                       checkable={i < 2}
                     ></ActivityItem>
                   ))}
