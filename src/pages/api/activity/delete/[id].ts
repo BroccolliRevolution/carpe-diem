@@ -9,5 +9,6 @@ export default async function handler(
   if (!id) return
 
   await activitiesRepo.deleteActivity(+id)
-  res.json(`deleted id ${id}`)
+  const activities = await activitiesRepo.getAllActivities()
+  res.json(activities)
 }

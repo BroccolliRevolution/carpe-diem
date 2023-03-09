@@ -8,5 +8,6 @@ export default async function handler(
   res: NextApiResponse<any>
 ) {
   await activitiesRepo.addActivity(req.body as ActivityAddRequest)
-  res.json(req.body)
+  const activities = await activitiesRepo.getAllActivities()
+  res.json(activities)
 }

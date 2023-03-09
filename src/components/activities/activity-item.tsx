@@ -267,7 +267,8 @@ const ActivityTitle = styled.div`
   display: flex;
   align-items: center;
   flex: 1 1 65%;
-  justify-content: flex-end;
+  justify-content: flex-start;
+  border-left: 1px solid rgb(0 0 0 / 24%);
 
   @media (max-width: 500px) {
     flex: 1 1 50%;

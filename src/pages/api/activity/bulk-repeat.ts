@@ -7,5 +7,6 @@ export default async function handler(
   res: NextApiResponse<any>
 ) {
   await activitiesRepo.bulkRepeatToday(req.body as number[])
-  res.json(req.body)
+  const activities = await activitiesRepo.getAllActivities()
+  res.json(activities)
 }

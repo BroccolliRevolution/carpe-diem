@@ -1,10 +1,12 @@
 import styled from "@emotion/styled"
-import { Button, Grid, Link, TextField } from "@mui/material"
 import RestartAltIcon from "@mui/icons-material/RestartAlt"
+import { Button, Grid } from "@mui/material"
 
-import { useCallback, useMemo, useRef, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { formatDate, today } from "../common/dateTime"
 import ActivityItem from "./activity-item"
+import { ButtonLink } from "./ButtonLink"
+import { TitleInput } from "./title-input"
 import UseActivities, { Activity } from "./useActivities"
 
 export const Activities = () => {
@@ -17,14 +19,6 @@ export const Activities = () => {
     repeatActivityToday,
     bulkRepeatToday,
   } = UseActivities()
-  const [title, setTitle] = useState("")
-  const titleText = useRef(null)
-
-  const saveActivity = () => {
-    const activity = { title }
-    addActivity(activity)
-    setTitle("")
-  }
 
   type ActivitiesGroupedByDate = { date: string; activities: Activity[] }[]
 
@@ -51,7 +45,7 @@ export const Activities = () => {
       }, [] as ActivitiesGroupedByDate)
   }, [])
 
-  // console.log("RERENDER")
+  console.log("RERENDER")
 
   const activitiesDone = useMemo(
     () => groupActivities(activities.filter((a) => a.done)),
@@ -63,7 +57,6 @@ export const Activities = () => {
   )
 
   const editPriority = (activity: Activity, direction: "UP" | "DOWN") => {
-    // debugger
     const index = activitiesNotDone[0].activities.indexOf(activity)
     const indexColliding = direction === "UP" ? index - 1 : index + 1
     if (indexColliding < 0) return
@@ -153,15 +146,9 @@ export const Activities = () => {
                 </ul>
               </div>
               {i === 0 && (
-                <Link
-                  onClick={(e) => {
-                    e.preventDefault()
-                    setShowMore(!showMore)
-                  }}
-                  href="#"
-                >
+                <ButtonLink onClick={(e) => setShowMore(!showMore)}>
                   {showMore ? "Show Less" : "Show More Days"}
-                </Link>
+                </ButtonLink>
               )}
             </div>
           )
@@ -174,31 +161,7 @@ export const Activities = () => {
     <GridStyled container spacing={3} height={"100%"}>
       <Grid item xs={12} md={7} lg={7}>
         <h3>Activities</h3>
-        <Grid container>
-          <Grid item xs={7}>
-            <TextField
-              ref={titleText}
-              fullWidth
-              onChange={(e) => setTitle(e.target.value)}
-              value={title}
-              id="outlined-basic"
-              label="Outlined"
-              variant="outlined"
-              onKeyDown={(ev) => {
-                if (ev.key === "Enter") {
-                  ev.preventDefault()
-                  saveActivity()
-                }
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={2} alignItems="stretch" style={{ display: "flex" }}>
-            <Button onClick={saveActivity} variant="contained">
-              +
-            </Button>
-          </Grid>
-        </Grid>
+        <TitleInput addActivity={addActivity} />
         <Grid
           item
           xs={12}

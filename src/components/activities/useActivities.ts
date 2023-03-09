@@ -40,14 +40,16 @@ const UseActivities = () => {
   }
 
   const addActivityMutation = async (activity: ActivityAddData) => {
-    await fetch("/api/activity/add", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(activity),
-    })
+    return (
+      await fetch("/api/activity/add", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(activity),
+      })
+    ).json()
   }
 
   const editActivityMutation = async ({ activity, activityData }: EditType) => {
@@ -76,24 +78,28 @@ const UseActivities = () => {
   }
 
   const repeatActivityMutation = async (activity: Activity) => {
-    await fetch(`/api/activity/repeat/${activity.id}`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
+    return (
+      await fetch(`/api/activity/repeat/${activity.id}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+    ).json()
   }
 
   const bulkRepeatTodayMutation = async (activities: Activity[]) => {
-    await fetch(`/api/activity/bulk-repeat`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(activities.map((a) => a.id)),
-    })
+    return (
+      await fetch(`/api/activity/bulk-repeat`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(activities.map((a) => a.id)),
+      })
+    ).json()
   }
 
   const deleteActivityMutation = async (activity: Activity) => {
@@ -117,102 +123,46 @@ const UseActivities = () => {
 
   const addActivity = useMutation({
     mutationFn: addActivityMutation,
-    // onSuccess: () => {
-    //   // Invalidate and refetch
-    //   queryClient.invalidateQueries({ queryKey: ["activities"] })
-    // },
-    onMutate: async (activity) => {
-      // Cancel any outgoing refetches
-      // (so they don't overwrite our optimistic update)
-      await queryClient.cancelQueries({
-        queryKey: ["activities"],
-      })
-
-      const previous = queryClient.getQueryData(["activities"]) as Activity[]
-      const id = previous[0].id
-      const priority = previous[0].id * 1000
-      const a = { ...activity, id, priority }
-
-      // Snapshot the previous value
-      const newData = [a, ...previous]
-
-      console.log(newData)
-
-      // Optimistically update to the new value
-      queryClient.setQueryData(["activities"], newData)
-      return { newData, a }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["activities"],
-      })
-    },
+    onSuccess: (data) => queryClient.setQueryData(["activities"], data),
   }).mutate
 
   const editActivity = useMutation({
     mutationFn: editActivityMutation,
-
-    onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["activities"] })
+    onSuccess: (data) => {
       queryClient.setQueryData(["activities"], data)
     },
   }).mutate
 
   const deleteActivity = useMutation({
     mutationFn: deleteActivityMutation,
-    onSuccess: (data, variables, context) => {
-      // Invalidate and refetch
-      console.log(data, variables, context)
-      queryClient.invalidateQueries({ queryKey: ["activities"] })
+    onSuccess: (data) => {
+      queryClient.setQueryData(["activities"], data)
     },
   }).mutate
 
   const checkActivity = useMutation({
     mutationFn: checkActivityMutation,
-    onMutate: async (activity) => {
-      // Cancel any outgoing refetches
-      // (so they don't overwrite our optimistic update)
-
-      // TODO @Peto: glitches here
-
-      if (activity.done) return
-
-      await queryClient.cancelQueries({
-        queryKey: ["activities", activity.id],
-      })
-
-      // Snapshot the previous value
-      const previous = queryClient.getQueryData(["activities"]) as Activity[]
-      const a = { ...activity, done: !activity.done }
-
-      const newData = previous.map((p) => (p.id === activity.id ? a : p))
-
-      // Optimistically update to the new value
-      queryClient.setQueryData(["activities"], newData)
-      return { newData, activity }
-    },
     onSuccess: (data) => {
-      // Invalidate and refetch
       queryClient.setQueryData(["activities"], data)
-      // queryClient.invalidateQueries({ queryKey: ["activities"] })
     },
   }).mutate
 
   const repeatActivityToday = useMutation({
     mutationFn: repeatActivityMutation,
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["activities"],
-      })
+    // onSettled: () => {
+    //   queryClient.invalidateQueries({
+    //     queryKey: ["activities"],
+    //   })
+    // },
+    onSuccess: (data) => {
+      queryClient.setQueryData(["activities"], data)
     },
   }).mutate
 
   const bulkRepeatToday = useMutation({
     mutationFn: bulkRepeatTodayMutation,
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["activities"],
-      })
+    onSuccess: (data) => {
+      queryClient.setQueryData(["activities"], data)
     },
   }).mutate
 

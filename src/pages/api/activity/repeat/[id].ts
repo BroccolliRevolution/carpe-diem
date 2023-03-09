@@ -9,5 +9,6 @@ export default async function handler(
   if (!id) return
 
   await activitiesRepo.repeatActivityToday(+id)
-  res.json(`repeat for today id ${id}`)
+  const activities = await activitiesRepo.getAllActivities()
+  res.json(activities)
 }
