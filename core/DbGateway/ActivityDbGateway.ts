@@ -4,7 +4,7 @@ import {
   ActivityResponse,
 } from "../activity/index"
 
-interface ActivityDbGateway {
+export default interface ActivityDbGateway {
   editActivity: (id: number, data: ActivityEditRequest) => void
   editPriority: (id: number, priority: number) => void
   editPriorityTop: (id: number) => void
@@ -15,5 +15,3 @@ interface ActivityDbGateway {
   repeatActivityToday: (id: number) => void
   bulkRepeatToday: (ids: number[]) => void
 }
-
-export default ActivityDbGateway
