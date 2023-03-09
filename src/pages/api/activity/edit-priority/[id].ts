@@ -7,11 +7,11 @@ export default async function handler(
   res: NextApiResponse<any>
 ) {
   const { id } = req.query
-  const data: ActivityEditRequest = req.body
+  const priority = req.body
 
   if (!id) return
 
-  await activitiesRepo.editActivity(+id, data)
+  await activitiesRepo.editPriority(+id, priority)
   const activities = await activitiesRepo.getAllActivities()
   res.json(activities)
 }

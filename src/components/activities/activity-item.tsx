@@ -20,12 +20,20 @@ import { useRef, useState } from "react"
 import { formatDate, formatTime, today } from "../common/dateTime"
 import { Activity, EditType } from "./useActivities"
 
+type PropType<TObj, TProp extends keyof TObj> = TObj[TProp]
+
 type Props = {
   activity: Activity
   checkable: boolean
   deleteActivity: (activity: Activity) => void
   editActivity: (data: EditType) => void
-  editPriority: (activity: Activity, direction: "UP" | "DOWN") => void
+  editPriority: ({
+    id,
+    priority,
+  }: {
+    id: PropType<Activity, "id">
+    priority: PropType<Activity, "priority">
+  }) => void
   checkActivity: (activity: Activity) => void
   repeatActivityToday: (activity: Activity) => void
 }
@@ -119,7 +127,12 @@ const ActivityItem = ({
               size="small"
               aria-label="priority up"
               component="label"
-              onClick={() => editPriority(activity, "UP")}
+              onClick={() =>
+                editPriority({
+                  id: activity.id,
+                  priority: activity.priority + 1,
+                })
+              }
             >
               <ArrowUpwardIcon />
             </IconButton>
@@ -127,7 +140,12 @@ const ActivityItem = ({
               size="small"
               aria-label="priority down"
               component="label"
-              onClick={() => editPriority(activity, "DOWN")}
+              onClick={() =>
+                editPriority({
+                  id: activity.id,
+                  priority: activity.priority - 1,
+                })
+              }
             >
               <ArrowDownwardIcon />
             </IconButton>

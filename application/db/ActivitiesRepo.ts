@@ -3,12 +3,101 @@ import { ActivityAddRequest, ActivityEditRequest } from "core/activity"
 import ActivityDbGateway from "core/DbGateway/ActivityDbGateway"
 import dayjs from "dayjs"
 
+const today = new Date(dayjs().format("YYYY-MM-DD"))
 export const activitiesRepo: ActivityDbGateway = {
-  editActivity: async (data: ActivityEditRequest) => {
+  editActivity: async (id: number, data: ActivityEditRequest) => {
     await prisma.activity.update({
-      where: { id: data.id },
+      where: { id },
       data,
     })
+  },
+  editPriority: async (id: number, priority: number) => {
+    const newPriority = priority
+
+    if (newPriority === 0) return
+
+    const activity = await prisma.activity.findFirst({
+      where: { id },
+    })
+
+    if (!activity) return
+    const oldPriority = activity.priority
+
+    if (oldPriority > newPriority) {
+      // going down
+
+      const activityMaxPriority = await prisma.activity.aggregate({
+        _min: {
+          priority: true,
+        },
+        where: {
+          created_at: {
+            gte: today,
+          },
+        },
+      })
+
+      const minPriority = activityMaxPriority._min.priority ?? 0
+
+      if (newPriority < minPriority) return
+
+      await prisma.activity.updateMany({
+        where: { priority: newPriority },
+        data: {
+          priority: {
+            increment: 1,
+          },
+        },
+      })
+
+      const a = await prisma.activity.update({
+        where: {
+          id,
+        },
+        data: {
+          priority: {
+            decrement: 1,
+          },
+        },
+      })
+    } else {
+      // going up
+
+      const activityMaxPriority = await prisma.activity.aggregate({
+        _max: {
+          priority: true,
+        },
+        where: {
+          created_at: {
+            gte: today,
+          },
+        },
+      })
+
+      const maxPriority = activityMaxPriority._max.priority ?? 0
+
+      if (newPriority > maxPriority) return
+
+      await prisma.activity.updateMany({
+        where: { priority: newPriority },
+        data: {
+          priority: {
+            decrement: 1,
+          },
+        },
+      })
+
+      const a = await prisma.activity.update({
+        where: {
+          id,
+        },
+        data: {
+          priority: {
+            increment: 1,
+          },
+        },
+      })
+    }
   },
   getAllActivities: async () => {
     const limitDate = dayjs().subtract(30, "day").format("YYYY-MM-DD")
@@ -69,7 +158,7 @@ export const activitiesRepo: ActivityDbGateway = {
         where: {
           AND: {
             created_at: {
-              gte: new Date(dayjs().format("YYYY-MM-DD")),
+              gte: today,
             },
             priority: {
               lte: activity?.priority,

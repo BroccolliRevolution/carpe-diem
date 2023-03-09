@@ -65,6 +65,25 @@ const UseActivities = () => {
     ).json()
   }
 
+  const editPriorityMutation = async ({
+    id,
+    priority,
+  }: {
+    id: number
+    priority: number
+  }) => {
+    return (
+      await fetch(`/api/activity/edit-priority/${id}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(priority),
+      })
+    ).json()
+  }
+
   const checkActivityMutation = async (activity: Activity) => {
     return await (
       await fetch(`/api/activity/check/${activity.id}`, {
@@ -133,6 +152,13 @@ const UseActivities = () => {
     },
   }).mutate
 
+  const editPriority = useMutation({
+    mutationFn: editPriorityMutation,
+    onSuccess: (data) => {
+      queryClient.setQueryData(["activities"], data)
+    },
+  }).mutate
+
   const deleteActivity = useMutation({
     mutationFn: deleteActivityMutation,
     onSuccess: (data) => {
@@ -171,6 +197,7 @@ const UseActivities = () => {
     addActivity,
     deleteActivity,
     editActivity,
+    editPriority,
     checkActivity,
     repeatActivityToday,
     bulkRepeatToday,

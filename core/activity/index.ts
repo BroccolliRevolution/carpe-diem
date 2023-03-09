@@ -13,7 +13,6 @@ export type Activity = {
 export type ActivityResponse = Activity
 
 export type ActivityEditRequest = {
-  id: number
   title?: string
   done?: boolean
   priority?: number

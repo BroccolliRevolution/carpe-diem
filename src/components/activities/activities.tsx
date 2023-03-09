@@ -18,11 +18,10 @@ export const Activities = () => {
     checkActivity,
     repeatActivityToday,
     bulkRepeatToday,
+    editPriority,
   } = UseActivities()
 
   type ActivitiesGroupedByDate = { date: string; activities: Activity[] }[]
-
-  // TODO @Peto: maybe useCallback and useMemo in this component
 
   const groupActivities = useCallback((activities: Activity[]) => {
     return activities
@@ -45,8 +44,6 @@ export const Activities = () => {
       }, [] as ActivitiesGroupedByDate)
   }, [])
 
-  console.log("RERENDER")
-
   const activitiesDone = useMemo(
     () => groupActivities(activities.filter((a) => a.done)),
     [activities, groupActivities]
@@ -56,46 +53,6 @@ export const Activities = () => {
     [activities, groupActivities]
   )
 
-  const editPriority = (activity: Activity, direction: "UP" | "DOWN") => {
-    const index = activitiesNotDone[0].activities.indexOf(activity)
-    const indexColliding = direction === "UP" ? index - 1 : index + 1
-    if (indexColliding < 0) return
-    if (indexColliding >= activitiesNotDone[0].activities.length) return
-    const collidingActivity = activitiesNotDone[0].activities[indexColliding]
-    if (direction === "UP") {
-      editActivity({
-        activity: collidingActivity,
-        activityData: {
-          id: collidingActivity.id,
-          priority: activity.priority,
-        },
-      })
-      editActivity({
-        activity,
-        activityData: {
-          id: activity.id,
-          priority: collidingActivity.priority,
-        },
-      })
-    }
-    if (direction === "DOWN") {
-      editActivity({
-        activity: collidingActivity,
-        activityData: {
-          id: collidingActivity.id,
-          priority: activity.priority,
-        },
-      })
-      editActivity({
-        activity,
-        activityData: {
-          id: activity.id,
-          priority: collidingActivity.priority,
-        },
-      })
-    }
-  }
-
   const ActivitiesList = ({
     activities,
   }: {
@@ -103,10 +60,7 @@ export const Activities = () => {
   }) => {
     const [showMore, setShowMore] = useState(false)
 
-    const displayDate = (date: string) => {
-      const todaysDate = today()
-      return date === todaysDate ? "Today" : date
-    }
+    const displayDate = (date: string) => (date === today() ? "Today" : date)
 
     return (
       <>
@@ -121,10 +75,7 @@ export const Activities = () => {
                   {i > 0 && (
                     <Button
                       variant="outlined"
-                      onClick={() => {
-                        const activitiesToRepeat = activities[i]
-                        bulkRepeatToday(activitiesToRepeat.activities)
-                      }}
+                      onClick={() => bulkRepeatToday(activities[i].activities)}
                     >
                       <RestartAltIcon />
                     </Button>

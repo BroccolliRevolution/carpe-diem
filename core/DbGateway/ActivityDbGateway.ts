@@ -5,7 +5,8 @@ import {
 } from "../activity/index"
 
 interface ActivityDbGateway {
-  editActivity: (data: ActivityEditRequest) => void
+  editActivity: (id: number, data: ActivityEditRequest) => void
+  editPriority: (id: number, priority: number) => void
   getAllActivities: () => Promise<ActivityResponse[]>
   addActivity: (activity: ActivityAddRequest) => Promise<number>
   deleteActivity: (id: number) => void
