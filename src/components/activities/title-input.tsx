@@ -34,7 +34,7 @@ export const TitleInput = ({ addActivity }: Props) => {
         </ButtonLink>
 
         <Grid container>
-          <Grid item xs={10} lg={7}>
+          <Grid item xs={10} lg={10} style={{ maxWidth: 390 }}>
             <TextField
               multiline={multiline}
               rows={7}

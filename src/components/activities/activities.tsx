@@ -112,7 +112,7 @@ export const Activities = () => {
 
   return (
     <GridStyled container spacing={3} height={"100%"}>
-      <Grid item xs={12} md={7} lg={7}>
+      <Grid item xs={12} md={4}>
         <h3>Activities</h3>
         <TitleInput addActivity={addActivity} />
         <Grid
@@ -124,7 +124,19 @@ export const Activities = () => {
           <ActivitiesList activities={activitiesNotDone}></ActivitiesList>
         </Grid>
       </Grid>
-      <Grid item xs={12} md={5} lg={5}>
+      <Grid item xs={12} md={4}>
+        <h3>Activities</h3>
+        <TitleInput addActivity={addActivity} />
+        <Grid
+          item
+          xs={12}
+          alignItems="stretch"
+          style={{ display: "flex", flexDirection: "column" }}
+        >
+          <ActivitiesList activities={activitiesNotDone}></ActivitiesList>
+        </Grid>
+      </Grid>
+      <Grid item xs={12} md={4}>
         <h3>Daily Log</h3>
         <ActivitiesList activities={activitiesDone}></ActivitiesList>
       </Grid>
