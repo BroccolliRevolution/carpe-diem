@@ -125,18 +125,6 @@ export const Activities = () => {
         </Grid>
       </Grid>
       <Grid item xs={12} md={4}>
-        <h3>Activities</h3>
-        <TitleInput addActivity={addActivity} />
-        <Grid
-          item
-          xs={12}
-          alignItems="stretch"
-          style={{ display: "flex", flexDirection: "column" }}
-        >
-          <ActivitiesList activities={activitiesNotDone}></ActivitiesList>
-        </Grid>
-      </Grid>
-      <Grid item xs={12} md={4}>
         <h3>Daily Log</h3>
         <ActivitiesList activities={activitiesDone}></ActivitiesList>
       </Grid>
