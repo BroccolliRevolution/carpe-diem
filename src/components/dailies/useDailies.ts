@@ -1,4 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { Activity } from "../activities/useActivities"
 import { fetchFn } from "../common/api"
 
 export type Daily = {
@@ -44,11 +45,18 @@ const useDailies = () => {
   const addMutation = async (daily: DailyAddData) =>
     fetchFn(`/api/daily/add`, "POST", JSON.stringify(daily))
 
+  type CheckResponse = { activities: Activity[]; dailies: Daily[] }
+
+  // TODO @Peto: fix type inference with something like useMutation<CheckResponse>
   const checkDailyMutation = useMutation({
     mutationFn: (daily: Daily) =>
       fetchFn(`/api/daily/check/${daily.id}`, "POST"),
     onSuccess: (data) => {
-      queryClient.setQueryData(["activities"], data)
+      queryClient.setQueryData(
+        ["activities"],
+        (data as CheckResponse).activities
+      )
+      queryClient.setQueryData(["dailies"], (data as CheckResponse).dailies)
     },
   }).mutate
 

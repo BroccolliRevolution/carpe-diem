@@ -114,7 +114,15 @@ export const dailiesRepo: DailiesDbGateway = {
   all: async () => {
     return await prisma.daily.findMany({
       where: {
-        active: true,
+        // active: true,
+        activities: {
+          none: {
+            done: true,
+            done_at: {
+              gte: today,
+            },
+          },
+        },
       },
       orderBy: {
         priority: "desc",
@@ -127,7 +135,7 @@ export const dailiesRepo: DailiesDbGateway = {
         AND: {
           active: true,
           created_at: {
-            gte: new Date(dayjs().format("YYYY-MM-DD")),
+            gte: today,
           },
         },
       },
@@ -169,6 +177,7 @@ export const dailiesRepo: DailiesDbGateway = {
       data: {
         title: daily.title,
         done: true,
+        dailyId: daily.id,
         done_at: new Date(),
       },
     })

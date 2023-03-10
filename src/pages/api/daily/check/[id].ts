@@ -10,6 +10,7 @@ export default async function handler(
   if (!id) return
 
   await dailiesRepo.toggle(+id)
-  const all = await activitiesRepo.all()
-  res.json(all)
+  const activities = await activitiesRepo.all()
+  const dailies = await dailiesRepo.all()
+  res.json({ activities, dailies })
 }
