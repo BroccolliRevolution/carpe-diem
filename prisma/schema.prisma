@@ -16,18 +16,19 @@ model Activity {
   created_at DateTime  @default(now())
   priority   Int       @default(1)
 
-  permanentTask PermanentTask? @relation(fields: [permanentTaskId], references: [id])
-  note          String? // note for done activity / or not done yet
-  grade         Int            @default(0)
+  daily Daily?  @relation(fields: [dailyId], references: [id])
+  note  String? // note for done activity / or not done yet
+  grade Int     @default(0)
 
   // order Int
   // reward Int
   // score  Int
 
-  permanentTaskId Int?
+  dailyId Int?
 }
 
-model PermanentTask {
+// Task that is repeated daily
+model Daily {
   id         Int      @id @default(autoincrement())
   title      String
   active     Boolean  @default(true)
@@ -40,6 +41,8 @@ model PermanentTask {
   // level      Int
   // order      Int
   activities Activity[]
+
+  @@map("Daily")
 }
 
 model DailyPerformance {
