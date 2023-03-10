@@ -4,8 +4,53 @@ import ActivityDbGateway from "core/DbGateway/ActivityDbGateway"
 import dayjs from "dayjs"
 
 const today = new Date(dayjs().format("YYYY-MM-DD"))
+const limitDate = dayjs().subtract(30, "day").format("YYYY-MM-DD")
+
 export const activitiesRepo: ActivityDbGateway = {
-  editActivity: async (id: number, data: ActivityEditRequest) => {
+  all: async () => {
+    return await prisma.$queryRaw`
+    SELECT * FROM "Activity" 
+    WHERE created_at >= ${limitDate}::date
+    ORDER BY done_at DESC, to_char(created_at,'dd/MM/yyyy') DESC, priority DESC;`
+  },
+  add: async (activity: ActivityAddRequest) => {
+    // TODO @Peto: unit test this -> also use something like Required<Omit<ActivityData, 'id'>>
+    // TODO @Peto: maybe check for the type here and throw an error
+
+    // TODO @Peto: refator - this is used multiple times here
+    const last = await prisma.activity.findFirst({
+      where: {
+        AND: {
+          done: false,
+          created_at: {
+            gte: new Date(dayjs().format("YYYY-MM-DD")),
+          },
+        },
+      },
+      orderBy: {
+        priority: "desc",
+      },
+    })
+    const a = await prisma.activity.create({
+      data: { ...activity, priority: (last?.priority ?? 0) + 1 },
+    })
+    return a.id
+  },
+  delete: async (id: number) => {
+    const activity = await prisma.activity.findFirst({
+      where: { id },
+    })
+    await prisma.activity.updateMany({
+      where: {
+        priority: {
+          gt: activity?.priority,
+        },
+      },
+      data: { priority: { decrement: 1 } },
+    })
+    await prisma.activity.delete({ where: { id: id } })
+  },
+  edit: async (id: number, data: ActivityEditRequest) => {
     await prisma.activity.update({
       where: { id },
       data,
@@ -144,52 +189,7 @@ export const activitiesRepo: ActivityDbGateway = {
       })
     }
   },
-  getAllActivities: async () => {
-    const limitDate = dayjs().subtract(30, "day").format("YYYY-MM-DD")
-
-    return await prisma.$queryRaw`
-    SELECT * FROM "Activity" 
-    WHERE created_at >= ${limitDate}::date
-    ORDER BY done_at DESC, to_char(created_at,'dd/MM/yyyy') DESC, priority DESC;`
-  },
-  addActivity: async (activity: ActivityAddRequest) => {
-    // TODO @Peto: unit test this -> also use something like Required<Omit<ActivityData, 'id'>>
-    // TODO @Peto: maybe check for the type here and throw an error
-
-    // TODO @Peto: refator - this is used multiple times here
-    const last = await prisma.activity.findFirst({
-      where: {
-        AND: {
-          done: false,
-          created_at: {
-            gte: new Date(dayjs().format("YYYY-MM-DD")),
-          },
-        },
-      },
-      orderBy: {
-        priority: "desc",
-      },
-    })
-    const a = await prisma.activity.create({
-      data: { ...activity, priority: (last?.priority ?? 0) + 1 },
-    })
-    return a.id
-  },
-  deleteActivity: async (id: number) => {
-    const activity = await prisma.activity.findFirst({
-      where: { id },
-    })
-    await prisma.activity.updateMany({
-      where: {
-        priority: {
-          gt: activity?.priority,
-        },
-      },
-      data: { priority: { decrement: 1 } },
-    })
-    await prisma.activity.delete({ where: { id: id } })
-  },
-  toggleActivity: async (id: number) => {
+  toggle: async (id: number) => {
     const activity = await prisma.activity.findFirst({
       where: { id },
     })
@@ -238,7 +238,7 @@ export const activitiesRepo: ActivityDbGateway = {
     })
   },
 
-  repeatActivityToday: async (id: number) => {
+  repeatToday: async (id: number) => {
     const activity = await prisma.activity.findFirst({
       where: { id },
     })

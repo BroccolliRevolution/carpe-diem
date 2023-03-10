@@ -11,13 +11,13 @@ export default function MyApp({
   const queryClient = new QueryClient()
 
   return (
-    <Layout>
-      <QueryClientProvider client={queryClient}>
-        <SessionProvider session={session}>
+    <QueryClientProvider client={queryClient}>
+      <SessionProvider session={session}>
+        <Layout>
           <Component {...pageProps} />
-        </SessionProvider>
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
-    </Layout>
+        </Layout>
+      </SessionProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   )
 }

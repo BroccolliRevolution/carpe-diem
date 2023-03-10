@@ -31,13 +31,13 @@ model Activity {
 model Daily {
   id         Int      @id @default(autoincrement())
   title      String
+  created_at DateTime @default(now())
   active     Boolean  @default(true)
   for_review Boolean // whether it should appear for review every week 
-  note       String // note just for permanent task
+  note       String? // note just for permanent task
   priority   Int      @default(1)
-  created_at DateTime @default(now())
+  importance Int      @default(1)
 
-  // importance Int
   // level      Int
   // order      Int
   activities Activity[]

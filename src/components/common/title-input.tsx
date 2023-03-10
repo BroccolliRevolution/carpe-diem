@@ -1,13 +1,15 @@
 import { Button, Grid, TextField } from "@mui/material"
-import Link from "next/link"
 import { useState } from "react"
-import { ButtonLink } from "../common/ButtonLink"
+import { ButtonLink } from "./ButtonLink"
 
+type ActivityData = {
+  title: string
+}
 type Props = {
-  onSave: (data: string) => void
+  addActivity: (data: ActivityData) => void
 }
 
-export const TitleInput = ({ onSave }: Props) => {
+export const TitleInput = ({ addActivity }: Props) => {
   const [title, setTitle] = useState("")
   const [multiline, setMultiline] = useState(false)
   const [showError, setShowError] = useState(false)
@@ -17,9 +19,10 @@ export const TitleInput = ({ onSave }: Props) => {
       setShowError(true)
       return
     }
-    onSave(title)
+    const activity = { title }
     setTitle("")
     setShowError(false)
+    addActivity(activity)
   }
 
   return (

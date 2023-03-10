@@ -1,4 +1,5 @@
 import styled from "@emotion/styled"
+import AirlineStopsIcon from "@mui/icons-material/AirlineStops"
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward"
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward"
 import DeleteIcon from "@mui/icons-material/Delete"
@@ -6,18 +7,17 @@ import EditIcon from "@mui/icons-material/Edit"
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
 import RestartAltIcon from "@mui/icons-material/RestartAlt"
 import SaveIcon from "@mui/icons-material/Save"
-import AirlineStopsIcon from "@mui/icons-material/AirlineStops"
 
 import {
   Badge,
   Card,
   Checkbox,
   IconButton,
-  Link,
   TextField,
   Tooltip,
 } from "@mui/material"
 import { useRef, useState } from "react"
+import { ChoppedTitle } from "../common/ChoppedTitle"
 import { formatDate, formatTime, today } from "../common/dateTime"
 import { Activity, EditType } from "./useActivities"
 
@@ -39,45 +39,6 @@ type Props = {
   editPriorityTop: (activity: Activity) => void
   repeatActivityToday: (activity: Activity) => void
 }
-
-const ChoppedTitle = ({ title }: { title: string }) => {
-  const maxLength = 80
-  const [fullText, setFullText] = useState(false)
-
-  if (title.length <= maxLength) return <>{title}</>
-
-  if (fullText)
-    return (
-      <>
-        {title}{" "}
-        <Link
-          onClick={(e) => {
-            e.preventDefault()
-            setFullText(false)
-          }}
-          href="#"
-        >
-          Show Less
-        </Link>
-      </>
-    )
-
-  return (
-    <>
-      {title.substring(0, maxLength)}{" "}
-      <Link
-        onClick={(e) => {
-          e.preventDefault()
-          setFullText(true)
-        }}
-        href="#"
-      >
-        ...
-      </Link>
-    </>
-  )
-}
-
 const ActivityItem = ({
   activity,
   checkable,
@@ -95,9 +56,10 @@ const ActivityItem = ({
 
   const isTodaysActivity = formatDate(activity.created_at) === today()
 
+  // TODO @Peto: change ListItem to div or something else, ListItem should be together with the usage of List
   return (
     <ListItem
-      key={activity.id}
+      key={activity.id + activity.title}
       style={{
         border: " 1px solid #00000047",
         borderRadius: 5,

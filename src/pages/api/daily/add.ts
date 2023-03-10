@@ -1,3 +1,4 @@
+import { dailiesRepo } from "./../../../../application/db/DailiesRepo"
 import type { NextApiRequest, NextApiResponse } from "next"
 
 import { activitiesRepo } from "application/db/ActivitiesRepo"
@@ -7,7 +8,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
-  await activitiesRepo.add(req.body as ActivityAddRequest)
-  const activities = await activitiesRepo.all()
-  res.json(activities)
+  await dailiesRepo.add(req.body as ActivityAddRequest)
+  const dailies = await dailiesRepo.all()
+  res.json(dailies)
 }

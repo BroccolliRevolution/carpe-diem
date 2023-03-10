@@ -8,7 +8,7 @@ export default async function handler(
   const { id } = req.query
   if (!id) return
 
-  await activitiesRepo.repeatActivityToday(+id)
-  const activities = await activitiesRepo.getAllActivities()
+  await activitiesRepo.repeatToday(+id)
+  const activities = await activitiesRepo.all()
   res.json(activities)
 }

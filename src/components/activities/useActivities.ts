@@ -1,5 +1,5 @@
-import { clear } from "console"
 import { useMutation, useQuery, useQueryClient } from "react-query"
+import { fetchFn } from "../common/api"
 
 export type Activity = {
   id: number
@@ -27,8 +27,50 @@ export type EditType = {
   activityData: ActivityEditData
 }
 
-const UseActivities = () => {
+const useActivities = () => {
   const queryClient = useQueryClient()
+
+  const addActivityMutation = async (activity: ActivityAddData) =>
+    fetchFn(`/api/activity/add`, "POST", JSON.stringify(activity))
+
+  const editActivityMutation = async ({ activity, activityData }: EditType) =>
+    fetchFn(
+      `/api/activity/edit/${activity.id}`,
+      "PATCH",
+      JSON.stringify(activityData)
+    )
+
+  const editPriorityMutation = async ({
+    id,
+    priority,
+  }: {
+    id: number
+    priority: number
+  }) =>
+    fetchFn(
+      `/api/activity/edit-priority/${id}`,
+      "POST",
+      JSON.stringify(priority)
+    )
+
+  const editPriorityTopMutation = async (activity: Activity) =>
+    fetchFn(`/api/activity/edit-priority-top/${activity.id}`, "POST")
+
+  const checkActivityMutation = async (activity: Activity) =>
+    fetchFn(`/api/activity/check/${activity.id}`, "POST")
+
+  const repeatActivityMutation = async (activity: Activity) =>
+    fetchFn(`/api/activity/repeat/${activity.id}`, "POST")
+
+  const bulkRepeatTodayMutation = async (activities: Activity[]) =>
+    fetchFn(
+      `/api/activity/bulk-repeat`,
+      "POST",
+      JSON.stringify(activities.map((a) => a.id))
+    )
+
+  const deleteActivityMutation = async (activity: Activity) =>
+    fetchFn(`/api/activity/delete/${activity.id}`, "DELETE")
 
   const fetchActivities = async () => {
     const res = (await (
@@ -38,113 +80,6 @@ const UseActivities = () => {
     // TODO @Peto: validate for type? from API call?
     return res
   }
-
-  const addActivityMutation = async (activity: ActivityAddData) => {
-    return (
-      await fetch("/api/activity/add", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(activity),
-      })
-    ).json()
-  }
-
-  const editActivityMutation = async ({ activity, activityData }: EditType) => {
-    return (
-      await fetch(`/api/activity/edit/${activity.id}`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(activityData),
-      })
-    ).json()
-  }
-
-  const editPriorityMutation = async ({
-    id,
-    priority,
-  }: {
-    id: number
-    priority: number
-  }) => {
-    return (
-      await fetch(`/api/activity/edit-priority/${id}`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(priority),
-      })
-    ).json()
-  }
-
-  const editPriorityTopMutation = async (activity: Activity) => {
-    return await (
-      await fetch(`/api/activity/edit-priority-top/${activity.id}`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-    ).json()
-  }
-
-  const checkActivityMutation = async (activity: Activity) => {
-    return await (
-      await fetch(`/api/activity/check/${activity.id}`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-    ).json()
-  }
-
-  const repeatActivityMutation = async (activity: Activity) => {
-    return (
-      await fetch(`/api/activity/repeat/${activity.id}`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-    ).json()
-  }
-
-  const bulkRepeatTodayMutation = async (activities: Activity[]) => {
-    return (
-      await fetch(`/api/activity/bulk-repeat`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(activities.map((a) => a.id)),
-      })
-    ).json()
-  }
-
-  const deleteActivityMutation = async (activity: Activity) => {
-    return (
-      await fetch(`/api/activity/delete/${activity.id}`, {
-        method: "DELETE",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-    ).json()
-  }
-
   const activities =
     useQuery({
       queryKey: ["activities"],
@@ -152,76 +87,28 @@ const UseActivities = () => {
       // refetchInterval: 2000,
     }).data ?? []
 
-  const addActivity = useMutation({
-    mutationFn: addActivityMutation,
-    onSuccess: (data) => queryClient.setQueryData(["activities"], data),
-  }).mutate
-
-  const editActivity = useMutation({
-    mutationFn: editActivityMutation,
-    onSuccess: (data) => {
-      queryClient.setQueryData(["activities"], data)
-    },
-  }).mutate
-
-  const editPriority = useMutation({
-    mutationFn: editPriorityMutation,
-    onSuccess: (data) => {
-      queryClient.setQueryData(["activities"], data)
-    },
-  }).mutate
-
-  const editPriorityTop = useMutation({
-    mutationFn: editPriorityTopMutation,
-    onSuccess: (data) => {
-      queryClient.setQueryData(["activities"], data)
-    },
-  }).mutate
-
-  const deleteActivity = useMutation({
-    mutationFn: deleteActivityMutation,
-    onSuccess: (data) => {
-      queryClient.setQueryData(["activities"], data)
-    },
-  }).mutate
-
-  const checkActivity = useMutation({
-    mutationFn: checkActivityMutation,
-    onSuccess: (data) => {
-      queryClient.setQueryData(["activities"], data)
-    },
-  }).mutate
-
-  const repeatActivityToday = useMutation({
-    mutationFn: repeatActivityMutation,
-    // onSettled: () => {
-    //   queryClient.invalidateQueries({
-    //     queryKey: ["activities"],
-    //   })
-    // },
-    onSuccess: (data) => {
-      queryClient.setQueryData(["activities"], data)
-    },
-  }).mutate
-
-  const bulkRepeatToday = useMutation({
-    mutationFn: bulkRepeatTodayMutation,
-    onSuccess: (data) => {
-      queryClient.setQueryData(["activities"], data)
-    },
-  }).mutate
+  const mutationData = <T, D>(
+    fn: (...args: T[]) => Promise<D>
+  ): {
+    mutationFn: (...args: T[]) => Promise<D>
+    onSuccess: (data: D) => void
+  } => ({
+    mutationFn: fn,
+    onSuccess: (data: any) => queryClient.setQueryData(["activities"], data),
+  })
 
   return {
     activities,
-    addActivity,
-    deleteActivity,
-    editActivity,
-    editPriority,
-    editPriorityTop,
-    checkActivity,
-    repeatActivityToday,
-    bulkRepeatToday,
+    addActivity: useMutation(mutationData(addActivityMutation)).mutate,
+    deleteActivity: useMutation(mutationData(deleteActivityMutation)).mutate,
+    editActivity: useMutation(mutationData(editActivityMutation)).mutate,
+    editPriority: useMutation(mutationData(editPriorityMutation)).mutate,
+    editPriorityTop: useMutation(mutationData(editPriorityTopMutation)).mutate,
+    checkActivity: useMutation(mutationData(checkActivityMutation)).mutate,
+    repeatActivityToday: useMutation(mutationData(repeatActivityMutation))
+      .mutate,
+    bulkRepeatToday: useMutation(mutationData(bulkRepeatTodayMutation)).mutate,
   }
 }
 
-export default UseActivities
+export default useActivities
