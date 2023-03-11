@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
 import { Activity } from "../activities/useActivities"
-import { fetchFn } from "../common/api"
+import { fetchFn, useApi } from "../common/useApi"
 
 export type Daily = {
   id: number
@@ -31,16 +31,10 @@ export type EditType = {
 }
 
 const useDailies = () => {
-  const queryClient = useQueryClient()
-
-  const fetchDailies = async () => {
-    const res = (await (
-      await fetch("/api/daily/all")
-    ).json()) as unknown as Daily[]
-
-    // TODO @Peto: validate for type? from API call?
-    return res
-  }
+  const { mutationData, queryClient, data } = useApi<Daily>(
+    "dailies",
+    "/api/daily/all"
+  )
 
   const addMutation = async (daily: DailyAddData) =>
     fetchFn(`/api/daily/add`, "POST", JSON.stringify(daily))
@@ -60,27 +54,8 @@ const useDailies = () => {
     },
   }).mutate
 
-  const dailies =
-    useQuery({
-      queryKey: ["dailies"],
-      queryFn: fetchDailies,
-      // refetchInterval: 2000,
-    }).data ?? []
-
-  const mutationData = <T, D>(
-    fn: (...args: T[]) => Promise<D>
-  ): {
-    mutationFn: (...args: T[]) => Promise<D>
-    onSuccess: (data: D) => void
-  } => ({
-    mutationFn: fn,
-    onSuccess: (data: unknown) => {
-      queryClient.setQueryData(["dailies"], data)
-    },
-  })
-
   return {
-    dailies,
+    dailies: data,
     add: useMutation(mutationData(addMutation)).mutate,
     check: checkDailyMutation,
   }

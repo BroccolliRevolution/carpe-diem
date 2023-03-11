@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { fetchFn } from "../common/api"
+import { fetchFn, useApi } from "../common/useApi"
 
 export type Activity = {
   id: number
@@ -28,7 +28,10 @@ export type EditType = {
 }
 
 const useActivities = () => {
-  const queryClient = useQueryClient()
+  const { mutationData, queryClient, data } = useApi<Activity>(
+    "activities",
+    "/api/activity/all"
+  )
 
   const addActivityMutation = async (activity: ActivityAddData) =>
     fetchFn(`/api/activity/add`, "POST", JSON.stringify(activity))
@@ -72,39 +75,18 @@ const useActivities = () => {
   const deleteActivityMutation = async (activity: Activity) =>
     fetchFn(`/api/activity/delete/${activity.id}`, "DELETE")
 
-  const fetchActivities = async () => {
-    const res = (await (
-      await fetch("/api/activity/all")
-    ).json()) as unknown as Activity[]
-
-    // TODO @Peto: validate for type? from API call?
-    return res
-  }
-  const activities =
-    useQuery({
-      queryKey: ["activities"],
-      queryFn: fetchActivities,
-      // refetchInterval: 2000,
-    }).data ?? []
-
-  const mutationData = <T, D>(
-    fn: (...args: T[]) => Promise<D>
-  ): {
-    mutationFn: (...args: T[]) => Promise<D>
-    onSuccess: (data: D) => void
-  } => ({
-    mutationFn: fn,
-    onSuccess: (data: any) => queryClient.setQueryData(["activities"], data),
-  })
-
   return {
-    activities,
+    activities: data,
     addActivity: useMutation(mutationData(addActivityMutation)).mutate,
     deleteActivity: useMutation(mutationData(deleteActivityMutation)).mutate,
-    editActivity: useMutation(mutationData(editActivityMutation)).mutate,
     editPriority: useMutation(mutationData(editPriorityMutation)).mutate,
+    editActivity: useMutation(mutationData(editActivityMutation)).mutate,
     editPriorityTop: useMutation(mutationData(editPriorityTopMutation)).mutate,
-    checkActivity: useMutation(mutationData(checkActivityMutation)).mutate,
+    checkActivity: useMutation(
+      mutationData(checkActivityMutation, (_) =>
+        queryClient.invalidateQueries(["dailies"])
+      )
+    ).mutate,
     repeatActivityToday: useMutation(mutationData(repeatActivityMutation))
       .mutate,
     bulkRepeatToday: useMutation(mutationData(bulkRepeatTodayMutation)).mutate,

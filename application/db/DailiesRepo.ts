@@ -8,7 +8,7 @@ import dayjs from "dayjs"
 const today = new Date(dayjs().format("YYYY-MM-DD"))
 export const dailiesRepo: DailiesDbGateway = {
   edit: async (id: number, data: ActivityEditRequest) => {
-    await prisma.daily.update({
+    await prisma.goal.update({
       where: { id },
       data,
     })
@@ -18,7 +18,7 @@ export const dailiesRepo: DailiesDbGateway = {
 
     if (newPriority === 0) return
 
-    const daily = await prisma.daily.findFirst({
+    const daily = await prisma.goal.findFirst({
       where: { id },
     })
 
@@ -112,7 +112,7 @@ export const dailiesRepo: DailiesDbGateway = {
     // }
   },
   all: async () => {
-    return await prisma.daily.findMany({
+    return await prisma.goal.findMany({
       where: {
         // active: true,
         activities: {
@@ -130,7 +130,7 @@ export const dailiesRepo: DailiesDbGateway = {
     })
   },
   add: async (daily: DailyAddRequest) => {
-    const last = await prisma.daily.findFirst({
+    const last = await prisma.goal.findFirst({
       where: {
         AND: {
           active: true,
@@ -143,20 +143,19 @@ export const dailiesRepo: DailiesDbGateway = {
         priority: "desc",
       },
     })
-    const a = await prisma.daily.create({
+    const a = await prisma.goal.create({
       data: {
         ...daily,
-        for_review: true,
         priority: (last?.priority ?? 0) + 1,
       },
     })
     return a.id
   },
   delete: async (id: number) => {
-    const daily = await prisma.daily.findFirst({
+    const daily = await prisma.goal.findFirst({
       where: { id },
     })
-    await prisma.daily.updateMany({
+    await prisma.goal.updateMany({
       where: {
         priority: {
           gt: daily?.priority,
@@ -164,10 +163,10 @@ export const dailiesRepo: DailiesDbGateway = {
       },
       data: { priority: { decrement: 1 } },
     })
-    await prisma.daily.delete({ where: { id: id } })
+    await prisma.goal.delete({ where: { id: id } })
   },
   toggle: async (id: number) => {
-    const daily = await prisma.daily.findFirst({
+    const daily = await prisma.goal.findFirst({
       where: { id },
     })
 
@@ -177,7 +176,7 @@ export const dailiesRepo: DailiesDbGateway = {
       data: {
         title: daily.title,
         done: true,
-        dailyId: daily.id,
+        goalId: daily.id,
         done_at: new Date(),
       },
     })

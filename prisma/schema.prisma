@@ -12,40 +12,72 @@ model Activity {
   id         Int       @id @default(autoincrement())
   title      String
   done       Boolean   @default(false)
-  done_at    DateTime? // or done_at DateTime
+  done_at    DateTime?
   created_at DateTime  @default(now())
   priority   Int       @default(1)
 
-  daily Daily?  @relation(fields: [dailyId], references: [id])
-  note  String? // note for done activity / or not done yet
-  grade Int     @default(0)
+  goal      Goal?   @relation(fields: [goalId], references: [id])
+  note      String? // note for done activity / or not done yet
+  grade     Int     @default(0)
+  max_grade Int     @default(3) // dailies - 3 grades (ok, good, great), but for longer projects I may have 10 points grading
 
   // order Int
   // reward Int
   // score  Int
 
-  dailyId Int?
+  goalId Int?
 }
 
-// Task that is repeated daily
-model Daily {
-  id         Int      @id @default(autoincrement())
-  title      String
-  created_at DateTime @default(now())
-  active     Boolean  @default(true)
-  for_review Boolean // whether it should appear for review every week 
-  note       String? // note just for permanent task
-  priority   Int      @default(1)
-  importance Int      @default(1)
+// Task that is repeated
+model Goal {
+  id          Int      @id @default(autoincrement())
+  title       String
+  created_at  DateTime @default(now())
+  active      Boolean  @default(true)
+  // for_review  Boolean // whether it should appear for review every week 
+  note        String? // note just for permanent task
+  priority    Int      @default(1)
+  importance  Int      @default(1)
+  periodicity Interval @default(DAY)
 
   // level      Int
   // order      Int
-  activities Activity[]
 
-  @@map("Daily")
+  childId  Int?
+  parent   Goal?  @relation("ParentChildrens", fields: [childId], references: [id])
+  children Goal[] @relation("ParentChildrens")
+
+  activities Activity[]
+  Label      Label?     @relation(fields: [labelId], references: [id])
+  labelId    Int?
+
+  @@map("Goal")
 }
 
-model DailyPerformance {
+enum Interval {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+  DAY
+  WEEK
+  MONTH
+  QUARTER
+  YEAR
+}
+
+model Label {
+  id       Int     @id @default(autoincrement())
+  title    String
+  priority Int     @default(1)
+  goals    Goal[]
+  active   Boolean @default(true)
+}
+
+model Performance {
   id                Int      @id @default(autoincrement())
   activitiesCount   Int      @default(0)
   created_at        DateTime @default(now())
@@ -54,5 +86,3 @@ model DailyPerformance {
   previousDayStreak Int      @default(0)
   streak            Int      @default(0)
 }
-
-//@TODO categories/tags or projects
