@@ -8,9 +8,9 @@ The project is created to make me stick to the useful habits and to avoid procra
 
 Even though it seems quite basic, it really helps me in my day-to-day life. I found it more useful for my porposes than Habitica.
 
-### Demo
-
-[Deployed with Vercel](https://carpe-diem-bzed.vercel.app/)
+<!-- ### Demo
+not yet available - login
+[Deployed with Vercel](https://carpe-diem-bzed.vercel.app/) -->
 
 ## Getting Started
 
