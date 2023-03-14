@@ -1,3 +1,4 @@
+import styled from "@emotion/styled"
 import { Button, Grid, TextField } from "@mui/material"
 import { useState } from "react"
 import { ButtonLink } from "../common/ButtonLink"
@@ -23,39 +24,45 @@ export const TitleInput = ({ onSave }: Props) => {
 
   return (
     <>
-      <div>
-        <ButtonLink onClick={(e) => setMultiline(!multiline)}>
-          {multiline ? "Simple" : "Multiline"}
-        </ButtonLink>
+      <ButtonLink onClick={(e) => setMultiline(!multiline)}>
+        {multiline ? "Simple" : "Multiline"}
+      </ButtonLink>
 
-        <Grid container>
-          <Grid item xs={10} lg={10} style={{ maxWidth: 390 }}>
-            <TextField
-              multiline={multiline}
-              rows={7}
-              fullWidth
-              onChange={(e) => setTitle(e.target.value)}
-              value={title}
-              id="outlined-basic"
-              label="Title"
-              variant="standard"
-              onKeyDown={(ev) => {
-                if (ev.key === "Enter") {
-                  ev.preventDefault()
-                  save()
-                }
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={2} alignItems="stretch" style={{ display: "flex" }}>
-            <Button onClick={save} variant="contained">
-              +
-            </Button>
-          </Grid>
-        </Grid>
-        {showError && <div style={{ color: "red" }}>Title cannot be empty</div>}
-      </div>
+      <Form
+        onSubmit={(e) => {
+          e.preventDefault()
+          save()
+        }}
+      >
+        <TextInput
+          multiline={multiline}
+          rows={7}
+          fullWidth
+          onChange={(e) => setTitle(e.target.value)}
+          value={title}
+          id="outlined-basic"
+          label="Title"
+          variant="standard"
+        />
+        <Submit>
+          <Button type="submit" variant="contained">
+            +
+          </Button>
+        </Submit>
+      </Form>
+      {showError && <div style={{ color: "red" }}>Title cannot be empty</div>}
     </>
   )
 }
+
+const TextInput = styled(TextField)`
+  max-width: 390px;
+`
+const Form = styled.form`
+  display: flex;
+`
+
+const Submit = styled.div`
+  display: flex;
+  align-items: stretch;
+`
