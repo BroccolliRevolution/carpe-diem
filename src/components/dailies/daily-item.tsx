@@ -102,7 +102,7 @@ const DailyItem = ({ daily, check, editPriority, editPriorityTop }: Props) => {
       <ActivityTitle>
         <Tooltip placement="top" arrow={true} title="">
           <span style={{ padding: 5 }}>
-            <span>{daily.periodicity}</span>{" "}
+            {/* <span>{daily.periodicity}</span>{" "} */}
             <ChoppedTitle title={daily.title} />
           </span>
         </Tooltip>

@@ -31,7 +31,6 @@ export type Daily = {
 
 export type DailyAddData = {
   title: string
-  priority?: number
 }
 
 export type DailyEditData = {
