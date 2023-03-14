@@ -2,19 +2,22 @@ import { useMutation } from "@tanstack/react-query"
 import { Activity } from "../activities/useActivities"
 import { fetchFn, useApi } from "../common/useApi"
 
-type Interval =
-  | "MONDAY"
-  | "TUESDAY"
-  | "WEDNESDAY"
-  | "THURSDAY"
-  | "FRIDAY"
-  | "SATURDAY"
-  | "SUNDAY"
-  | "DAY"
-  | "WEEK"
-  | "MONTH"
-  | "QUARTER"
-  | "YEAR"
+export const intervals = [
+  "DAY",
+  "WEEK",
+  "MONTH",
+  "QUARTER",
+  "YEAR",
+  "MONDAY",
+  "TUESDAY",
+  "WEDNESDAY",
+  "THURSDAY",
+  "FRIDAY",
+  "SATURDAY",
+  "SUNDAY",
+] as const
+
+type Interval = typeof intervals[number]
 
 export type Daily = {
   id: number

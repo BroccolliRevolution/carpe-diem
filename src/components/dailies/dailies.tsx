@@ -9,7 +9,7 @@ export const Dailies = () => {
     <div>
       <h3>Dailies</h3>
 
-      <NewActivity onSave={add} />
+      <NewActivity />
 
       <ul style={{ listStyleType: "none", padding: 0 }}>
         {dailies.map((daily) => (
