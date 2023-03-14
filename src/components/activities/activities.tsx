@@ -6,8 +6,8 @@ import { useCallback, useMemo, useState } from "react"
 import { formatDate, today } from "../common/dateTime"
 import ActivityItem from "./activity-item"
 import { ButtonLink } from "../common/ButtonLink"
-import { TitleInput } from "./title-input"
 import useActivities, { Activity } from "./useActivities"
+import { TitleInput } from "../common/titleInput"
 
 export const Activities = ({ type }: { type: "done" | "todo" }) => {
   const {

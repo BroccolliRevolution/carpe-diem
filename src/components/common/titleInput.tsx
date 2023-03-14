@@ -1,28 +1,24 @@
 import { Button, Grid, TextField } from "@mui/material"
 import { useState } from "react"
-import { ButtonLink } from "./ButtonLink"
+import { ButtonLink } from "../common/ButtonLink"
 
-type ActivityData = {
-  title: string
-}
 type Props = {
-  addActivity: (data: ActivityData) => void
+  onSave: (data: string) => void
 }
 
-export const TitleInput = ({ addActivity }: Props) => {
+export const TitleInput = ({ onSave }: Props) => {
   const [title, setTitle] = useState("")
   const [multiline, setMultiline] = useState(false)
   const [showError, setShowError] = useState(false)
 
-  const saveActivity = () => {
+  const save = () => {
     if (title === "") {
       setShowError(true)
       return
     }
-    const activity = { title }
+    onSave(title)
     setTitle("")
     setShowError(false)
-    addActivity(activity)
   }
 
   return (
@@ -42,18 +38,18 @@ export const TitleInput = ({ addActivity }: Props) => {
               value={title}
               id="outlined-basic"
               label="Title"
-              variant="outlined"
+              variant="standard"
               onKeyDown={(ev) => {
                 if (ev.key === "Enter") {
                   ev.preventDefault()
-                  saveActivity()
+                  save()
                 }
               }}
             />
           </Grid>
 
           <Grid item xs={2} alignItems="stretch" style={{ display: "flex" }}>
-            <Button onClick={saveActivity} variant="contained">
+            <Button onClick={save} variant="contained">
               +
             </Button>
           </Grid>

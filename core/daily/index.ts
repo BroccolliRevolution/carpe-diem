@@ -1,6 +1,6 @@
 // entity type
 
-export type Interval =
+type Interval =
   | "MONDAY"
   | "TUESDAY"
   | "WEDNESDAY"

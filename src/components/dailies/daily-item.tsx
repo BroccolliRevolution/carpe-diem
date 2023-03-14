@@ -9,7 +9,6 @@ import { Card, IconButton, Tooltip } from "@mui/material"
 import { useRef, useState } from "react"
 import { PropType } from "../common"
 import { ChoppedTitle } from "../common/ChoppedTitle"
-import { formatDate, today } from "../common/dateTime"
 import { Daily } from "./useDailies"
 
 type Props = {
@@ -30,8 +29,6 @@ const DailyItem = ({ daily, check, editPriority, editPriorityTop }: Props) => {
   const [editing, setEditing] = useState(false)
   const [showOptions, setShowOptions] = useState(false)
   const titleText = useRef(null)
-
-  const isTodaysActivity = formatDate(daily.created_at) === today()
 
   return (
     <ListItem
@@ -105,6 +102,7 @@ const DailyItem = ({ daily, check, editPriority, editPriorityTop }: Props) => {
       <ActivityTitle>
         <Tooltip placement="top" arrow={true} title="">
           <span style={{ padding: 5 }}>
+            <span>{daily.periodicity}</span>{" "}
             <ChoppedTitle title={daily.title} />
           </span>
         </Tooltip>

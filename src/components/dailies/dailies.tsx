@@ -1,5 +1,5 @@
-import { TitleInput } from "../activities/title-input"
 import DailyItem from "./daily-item"
+import NewActivity from "./new-activity"
 import useDailies from "./useDailies"
 
 export const Dailies = () => {
@@ -8,7 +8,8 @@ export const Dailies = () => {
   return (
     <div>
       <h3>Dailies</h3>
-      <TitleInput onSave={(title) => add({ title })} />
+
+      <NewActivity onSave={(d) => console.log(d)} />
 
       <ul style={{ listStyleType: "none", padding: 0 }}>
         {dailies.map((daily) => (

@@ -2,15 +2,31 @@ import { useMutation } from "@tanstack/react-query"
 import { Activity } from "../activities/useActivities"
 import { fetchFn, useApi } from "../common/useApi"
 
+type Interval =
+  | "MONDAY"
+  | "TUESDAY"
+  | "WEDNESDAY"
+  | "THURSDAY"
+  | "FRIDAY"
+  | "SATURDAY"
+  | "SUNDAY"
+  | "DAY"
+  | "WEEK"
+  | "MONTH"
+  | "QUARTER"
+  | "YEAR"
+
 export type Daily = {
   id: number
   title: string
   created_at: string
   active: boolean
-  for_review: boolean
   note: string | null
   priority: number
   importance: number
+  periodicity: Interval
+  childId: number | null
+  labelId: number | null
 }
 
 export type DailyAddData = {
