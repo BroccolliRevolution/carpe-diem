@@ -1,5 +1,5 @@
 import DailyItem from "./daily-item"
-import NewActivity from "./new-activity"
+import NewDaily from "./new-daily"
 import useDailies from "./useDailies"
 
 export const Dailies = () => {
@@ -9,7 +9,7 @@ export const Dailies = () => {
     <div>
       <h3>Dailies</h3>
 
-      <NewActivity />
+      <NewDaily />
 
       <ul style={{ listStyleType: "none", padding: 0 }}>
         {dailies.map((daily) => (

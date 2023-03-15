@@ -25,11 +25,8 @@ type Props = {
 }
 
 const DailyItem = ({ daily, check, editPriority, editPriorityTop }: Props) => {
-  const [title, setTitle] = useState<string>(daily.title)
   const [editing, setEditing] = useState(false)
   const [showOptions, setShowOptions] = useState(false)
-  const titleText = useRef(null)
-
   return (
     <ListItem
       key={daily.id + daily.title}

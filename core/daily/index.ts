@@ -24,7 +24,7 @@ export type Daily = {
   priority: number
   importance: number
   periodicity: Interval
-  childId: number | null
+  parentId: number | null
   labelId: number | null
 }
 

@@ -43,8 +43,9 @@ model Goal {
   // level      Int
   // order      Int
 
-  childId  Int?
-  parent   Goal?  @relation("ParentChildrens", fields: [childId], references: [id])
+  parentId Int?
+  parent   Goal? @relation("ParentChildrens", fields: [parentId], references: [id])
+
   children Goal[] @relation("ParentChildrens")
 
   activities Activity[]

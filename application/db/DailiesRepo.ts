@@ -1,4 +1,5 @@
 import { prisma } from "@/db"
+import { Interval } from "@prisma/client"
 import { ActivityEditRequest } from "core/activity"
 import { DailyAddRequest } from "core/daily"
 import DailiesDbGateway from "core/DbGateway/DailiesDbGateway"
@@ -112,16 +113,33 @@ export const dailiesRepo: DailiesDbGateway = {
     // }
   },
   all: async () => {
+    // @ts-ignore
+    const todaysDayOfWeek = dayjs().format("dddd").toUpperCase()
+
     return await prisma.goal.findMany({
       where: {
-        // active: true,
-        activities: {
-          none: {
-            done: true,
-            done_at: {
-              gte: today,
+        AND: {
+          activities: {
+            none: {
+              done: true,
+              done_at: {
+                gte: today,
+              },
             },
           },
+          active: true,
+          OR: [
+            {
+              periodicity: {
+                equals: "DAY",
+              },
+            },
+            {
+              periodicity: {
+                equals: todaysDayOfWeek as Interval,
+              },
+            },
+          ],
         },
       },
       orderBy: {

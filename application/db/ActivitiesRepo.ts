@@ -194,11 +194,13 @@ export const activitiesRepo: ActivityDbGateway = {
       where: { id },
     })
 
+    if (!activity) return
+
     // TODO @Peto: maybe use this even for update priority!
 
     // TODO @Peto: extract code like this to use cases + test
     // shift activities
-    if (!activity?.done) {
+    if (!activity.done) {
       await prisma.activity.updateMany({
         where: {
           AND: {
@@ -206,7 +208,7 @@ export const activitiesRepo: ActivityDbGateway = {
               gte: today,
             },
             priority: {
-              lte: activity?.priority,
+              lte: activity.priority,
             },
           },
         },
@@ -228,12 +230,30 @@ export const activitiesRepo: ActivityDbGateway = {
       },
     })
 
+    // if activity which has being undone is a Goal, then just remove
+    const isGoal = await prisma.goal.count({
+      where: {
+        activities: {
+          some: {
+            id: activity.id,
+          },
+        },
+      },
+    })
+
+    if (isGoal) {
+      await prisma.activity.delete({
+        where: { id },
+      })
+      return
+    }
+
     await prisma.activity.update({
       where: { id },
       data: {
-        done: !activity?.done,
-        done_at: !activity?.done ? new Date() : null,
-        priority: activity?.done ? (last?.priority ?? 0) + 1 : 0,
+        done: !activity.done,
+        done_at: !activity.done ? new Date() : null,
+        priority: activity.done ? (last?.priority ?? 0) + 1 : 0,
       },
     })
   },

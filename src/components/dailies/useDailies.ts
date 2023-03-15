@@ -17,23 +17,25 @@ export const intervals = [
   "SUNDAY",
 ] as const
 
-type Interval = typeof intervals[number]
+export type Interval = typeof intervals[number]
 
 export type Daily = {
   id: number
   title: string
-  created_at: string
+  created_at: Date
   active: boolean
   note: string | null
   priority: number
   importance: number
   periodicity: Interval
-  childId: number | null
+  parentId: number | null
   labelId: number | null
 }
 
 export type DailyAddData = {
   title: string
+  parentId?: number | null
+  periodicity?: Interval | null
 }
 
 export type DailyEditData = {
