@@ -1,16 +1,8 @@
-import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Box,
-  Grid,
-} from "@mui/material"
+import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material"
 import Button from "@mui/material/Button"
 import Dialog from "@mui/material/Dialog"
 import DialogActions from "@mui/material/DialogActions"
 import DialogContent from "@mui/material/DialogContent"
-import DialogContentText from "@mui/material/DialogContentText"
 import DialogTitle from "@mui/material/DialogTitle"
 import TextField from "@mui/material/TextField"
 import { FormEvent, useState } from "react"
@@ -53,8 +45,6 @@ export default function NewDaily() {
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>New Permanent Task</DialogTitle>
         <DialogContent>
-          {/* <DialogContentText></DialogContentText> */}
-
           <Box component="form" noValidate onSubmit={save}>
             <TextField
               margin="normal"
