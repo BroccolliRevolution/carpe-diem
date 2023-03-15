@@ -271,7 +271,7 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.19.0"
 
-"@babel/runtime@^7.12.5", "@babel/runtime@^7.16.3", "@babel/runtime@^7.18.3", "@babel/runtime@^7.20.13", "@babel/runtime@^7.20.7", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
+"@babel/runtime@^7.12.5", "@babel/runtime@^7.18.3", "@babel/runtime@^7.20.13", "@babel/runtime@^7.20.7", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
   "integrity" "sha512-gt3PKXs0DBoL9xCvOIIZ2NEqAGZqHjAnmVbfQtB620V0uReIQutpel14KcneZuer7UioY8ALKZ7iocavvzTNFA=="
   "resolved" "https://registry.npmjs.org/@babel/runtime/-/runtime-7.20.13.tgz"
   "version" "7.20.13"
@@ -866,7 +866,7 @@
     "@nodelib/fs.scandir" "2.1.5"
     "fastq" "^1.6.0"
 
-"@panva/hkdf@^1.0.1":
+"@panva/hkdf@^1.0.2":
   "integrity" "sha512-MSAs9t3Go7GUkMhpKC44T58DJ5KGk2vBo+h1cqQeqlMfdGkxaVB78ZWpv9gYi/g2fa4sopag9gJsNvS8XGgWJA=="
   "resolved" "https://registry.npmjs.org/@panva/hkdf/-/hkdf-1.0.2.tgz"
   "version" "1.0.2"
@@ -957,7 +957,7 @@
     "superjson" "^1.10.0"
     "use-sync-external-store" "^1.2.0"
 
-"@tanstack/react-query@^4.26.1", "@tanstack/react-query@4.26.1":
+"@tanstack/react-query@^4.18.0", "@tanstack/react-query@^4.26.1", "@tanstack/react-query@4.26.1":
   "integrity" "sha512-i3dnz4TOARGIXrXQ5P7S25Zfi4noii/bxhcwPurh2nrf5EUCcAt/95TB2HSmMweUBx206yIMWUMEQ7ptd6zwDg=="
   "resolved" "https://registry.npmjs.org/@tanstack/react-query/-/react-query-4.26.1.tgz"
   "version" "4.26.1"
@@ -1007,6 +1007,28 @@
   "integrity" "sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A=="
   "resolved" "https://registry.npmjs.org/@tootallnate/once/-/once-2.0.0.tgz"
   "version" "2.0.0"
+
+"@trpc/client@^10.16.0", "@trpc/client@10.16.0":
+  "integrity" "sha512-Hxxi3mOcUyszosj6xpPDIIBV1TOhXKpZ191BW/60r1lXBAfNrDUWHOTol1Dfu+hpcx4bpj3WRyob5cf+6KeCDA=="
+  "resolved" "https://registry.npmjs.org/@trpc/client/-/client-10.16.0.tgz"
+  "version" "10.16.0"
+
+"@trpc/next@^10.16.0":
+  "integrity" "sha512-2AohDydvvLk2IjnQ1hTnT8cVmLItYf6cFRwJVYnyi35y2DVKXLiIWuKSTzc9xzR5enYFUQJZivXaWx/i0jjcfQ=="
+  "resolved" "https://registry.npmjs.org/@trpc/next/-/next-10.16.0.tgz"
+  "version" "10.16.0"
+  dependencies:
+    "react-ssr-prepass" "^1.5.0"
+
+"@trpc/react-query@^10.16.0", "@trpc/react-query@10.16.0":
+  "integrity" "sha512-LHLkyYgmmmaqMK33Hil7+DxCRG+8cRl2hF/rY8DQneh7e/u4cBA/wbun5vs8BAJxmYcHsQNPlq5aBy80CyU78g=="
+  "resolved" "https://registry.npmjs.org/@trpc/react-query/-/react-query-10.16.0.tgz"
+  "version" "10.16.0"
+
+"@trpc/server@^10.16.0", "@trpc/server@10.16.0":
+  "integrity" "sha512-lCUq7AB7vcgrNbaN+xP/AN62OjKDgrRyG7fTDPv5K633ut7KJ3m57qs60VRBOgp9vow6elAg51pKFFDtPHbTRA=="
+  "resolved" "https://registry.npmjs.org/@trpc/server/-/server-10.16.0.tgz"
+  "version" "10.16.0"
 
 "@types/aria-query@^5.0.1":
   "integrity" "sha512-XTIieEY+gvJ39ChLcB4If5zHtPxt3Syj5rgZR+e1ctpmK8NjPf0zFqsz4JpLJT0xla9GFDKjy8Cpu331nrmE1Q=="
@@ -3367,7 +3389,7 @@
     "import-local" "^3.0.2"
     "jest-cli" "^29.3.1"
 
-"jose@^4.10.0", "jose@^4.9.3":
+"jose@^4.10.0", "jose@^4.11.4":
   "integrity" "sha512-wW1u3cK81b+SFcHjGC8zw87yuyUweEFe0UJirrXEw1NasW00eF7sZjeG3SLBGz001ozxQ46Y9sofDvhBmWFtXQ=="
   "resolved" "https://registry.npmjs.org/jose/-/jose-4.12.0.tgz"
   "version" "4.12.0"
@@ -3649,21 +3671,21 @@
   "version" "1.4.0"
 
 "next-auth@^4.19.2":
-  "integrity" "sha512-6V2YG3IJQVhgCAH7mvT3yopTW92gMdUrcwGX7NQ0dCreT/+axGua/JmVdarjec0C/oJukKpIYRgjMlV+L5ZQOQ=="
-  "resolved" "https://registry.npmjs.org/next-auth/-/next-auth-4.19.2.tgz"
-  "version" "4.19.2"
+  "integrity" "sha512-ZcTUN4qzzZ/zJYgOW0hMXccpheWtAol8QOMdMts+LYRcsPGsqf2hEityyaKyECQVw1cWInb9dF3wYwI5GZdEmQ=="
+  "resolved" "https://registry.npmjs.org/next-auth/-/next-auth-4.20.1.tgz"
+  "version" "4.20.1"
   dependencies:
-    "@babel/runtime" "^7.16.3"
-    "@panva/hkdf" "^1.0.1"
+    "@babel/runtime" "^7.20.13"
+    "@panva/hkdf" "^1.0.2"
     "cookie" "^0.5.0"
-    "jose" "^4.9.3"
+    "jose" "^4.11.4"
     "oauth" "^0.9.15"
-    "openid-client" "^5.1.0"
+    "openid-client" "^5.4.0"
     "preact" "^10.6.3"
     "preact-render-to-string" "^5.1.19"
     "uuid" "^8.3.2"
 
-"next@^12.2.5 || ^13", "next@13.1.4":
+"next@*", "next@^12.2.5 || ^13", "next@13.1.4":
   "integrity" "sha512-g0oBUU+tcOPKbXTVdsDO2adc6wd/ggqauHHysPQJxuIKqZ+fwICGJht0C5D5V0A/77eQDF5EFwNdAHkFvBDsog=="
   "resolved" "https://registry.npmjs.org/next/-/next-13.1.4.tgz"
   "version" "13.1.4"
@@ -3821,7 +3843,7 @@
     "is-docker" "^2.1.1"
     "is-wsl" "^2.2.0"
 
-"openid-client@^5.1.0":
+"openid-client@^5.4.0":
   "integrity" "sha512-hgJa2aQKcM2hn3eyVtN12tEA45ECjTJPXCgUh5YzTzy9qwapCvmDTVPWOcWVL0d34zeQoQ/hbG9lJhl3AYxJlQ=="
   "resolved" "https://registry.npmjs.org/openid-client/-/openid-client-5.4.0.tgz"
   "version" "5.4.0"
@@ -4071,7 +4093,7 @@
   "resolved" "https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz"
   "version" "1.2.3"
 
-"react-dom@^16.8.0 || ^17.0.0 || ^18.0.0", "react-dom@^17.0.0 || ^18.0.0", "react-dom@^17.0.2 || ^18", "react-dom@^18.0.0", "react-dom@^18.2.0", "react-dom@>= 16.8.0", "react-dom@>=16.6.0", "react-dom@18.2.0":
+"react-dom@^16.8.0 || ^17.0.0 || ^18.0.0", "react-dom@^17.0.0 || ^18.0.0", "react-dom@^17.0.2 || ^18", "react-dom@^18.0.0", "react-dom@^18.2.0", "react-dom@>= 16.8.0", "react-dom@>=16.6.0", "react-dom@>=16.8.0", "react-dom@18.2.0":
   "integrity" "sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g=="
   "resolved" "https://registry.npmjs.org/react-dom/-/react-dom-18.2.0.tgz"
   "version" "18.2.0"
@@ -4098,6 +4120,11 @@
   "integrity" "sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w=="
   "resolved" "https://registry.npmjs.org/react-is/-/react-is-18.2.0.tgz"
   "version" "18.2.0"
+
+"react-ssr-prepass@^1.5.0":
+  "integrity" "sha512-yFNHrlVEReVYKsLI5lF05tZoHveA5pGzjFbFJY/3pOqqjGOmMmqx83N4hIjN2n6E1AOa+eQEUxs3CgRnPmT0RQ=="
+  "resolved" "https://registry.npmjs.org/react-ssr-prepass/-/react-ssr-prepass-1.5.0.tgz"
+  "version" "1.5.0"
 
 "react-transition-group@^4.4.5":
   "integrity" "sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g=="
@@ -4867,3 +4894,8 @@
   "integrity" "sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q=="
   "resolved" "https://registry.npmjs.org/yocto-queue/-/yocto-queue-0.1.0.tgz"
   "version" "0.1.0"
+
+"zod@^3.21.4":
+  "integrity" "sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw=="
+  "resolved" "https://registry.npmjs.org/zod/-/zod-3.21.4.tgz"
+  "version" "3.21.4"
