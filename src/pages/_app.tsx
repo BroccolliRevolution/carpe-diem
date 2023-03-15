@@ -13,14 +13,13 @@ const MyApp: AppType = ({
   const queryClient = new QueryClient()
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <SessionProvider session={session}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </SessionProvider>
+    // <QueryClientProvider client={queryClient}>
+    <SessionProvider session={session}>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
       <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+    </SessionProvider>
   )
 }
 export default trpc.withTRPC(MyApp)

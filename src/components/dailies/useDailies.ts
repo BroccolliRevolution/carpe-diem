@@ -2,6 +2,8 @@ import { useMutation } from "@tanstack/react-query"
 import { Activity } from "../activities/useActivities"
 import { fetchFn, useApi } from "../common/useApi"
 
+// TODO @Peto: this should go to backend -  trpc
+// TODO @Peto: even better - get lists like these from tRPC call, go to db to fetch these values
 export const intervals = [
   "DAY",
   "WEEK",
@@ -22,7 +24,7 @@ export type Interval = typeof intervals[number]
 export type Daily = {
   id: number
   title: string
-  created_at: Date
+  created_at: string
   active: boolean
   note: string | null
   priority: number

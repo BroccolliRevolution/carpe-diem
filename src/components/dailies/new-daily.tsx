@@ -1,3 +1,4 @@
+import { trpc } from "@/utils/trpc"
 import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material"
 import Button from "@mui/material/Button"
 import Dialog from "@mui/material/Dialog"
@@ -16,9 +17,17 @@ const DEFAULT_PERIODICITY: Interval = "DAY"
 export default function NewDaily() {
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState("")
-  const [parentId, setParent] = useState<number | null>(null)
+  const [parentId, setParent] = useState<number | null>(0)
   const [periodicity, setPeriodicity] = useState(DEFAULT_PERIODICITY)
-  const { dailies, add } = useDailies()
+
+  const utils = trpc.useContext()
+  const add = trpc.daily.add.useMutation({
+    onSuccess(input) {
+      utils.daily.all.setData(undefined, input)
+    },
+  }).mutate
+
+  const dailies = trpc.daily.all.useQuery().data ?? []
 
   const handleClickOpen = () => {
     setOpen(true)

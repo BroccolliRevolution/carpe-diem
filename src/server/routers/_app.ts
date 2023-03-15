@@ -1,21 +1,11 @@
 import { z } from "zod"
-import { procedure, router } from "../trpc"
+import { publicProcedure, router } from "../trpc"
 import { activityRouter } from "./activity"
+import { dailyRouter } from "./daily"
 
 export const appRouter = router({
   activity: activityRouter,
-  healthcheck: procedure.query(() => "yay!"),
-  hello: procedure
-    .input(
-      z.object({
-        text: z.string(),
-      })
-    )
-    .query(({ input }) => {
-      return {
-        greeting: `WHat up, ${input.text}?!`,
-      }
-    }),
+  daily: dailyRouter,
 })
 
 // export type definition of API

@@ -1,3 +1,4 @@
+import { trpc } from "@/utils/trpc"
 import styled from "@emotion/styled"
 import { Grid, useMediaQuery, useTheme } from "@mui/material"
 import { Activities } from "./activities/activities"
@@ -5,6 +6,8 @@ import BasicTabs from "./common/BasicTabs"
 import { Dailies } from "./dailies/dailies"
 
 const DesktopView = () => {
+  const q = trpc.daily.all.useQuery().data
+
   return (
     <>
       <Grid

@@ -3,7 +3,7 @@ import { activitiesRepo } from "application/db/ActivitiesRepo"
  *
  * This is an example router, you can delete this file and then update `../pages/api/trpc/[trpc].tsx`
  */
-import { router, procedure } from "../trpc"
+import { router, publicProcedure } from "../trpc"
 import { Prisma } from "@prisma/client"
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
@@ -19,14 +19,14 @@ import { z } from "zod"
 // });
 
 export const activityRouter = router({
-  all: procedure
+  all: publicProcedure
     // .input(
     //   z.object({
     //     limit: z.number().min(1).max(100).nullish(),
     //     cursor: z.string().nullish(),
     //   })
     // )
-    .query(async ({ input }) => {
+    .query(async () => {
       /**
        * For pagination docs you can have a look here
        * @see https://trpc.io/docs/useInfiniteQuery
@@ -65,7 +65,7 @@ export const activityRouter = router({
 
       return activitiesRepo.all()
     }),
-  byId: procedure
+  byId: publicProcedure
     .input(
       z.object({
         id: z.string(),
@@ -85,7 +85,7 @@ export const activityRouter = router({
       //   }
       return "post"
     }),
-  add: procedure
+  add: publicProcedure
     .input(
       z.object({
         id: z.string().uuid().optional(),

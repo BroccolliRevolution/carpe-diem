@@ -6,14 +6,14 @@ import CheckIcon from "@mui/icons-material/Check"
 import EditIcon from "@mui/icons-material/Edit"
 
 import { Card, IconButton, Tooltip } from "@mui/material"
-import { useRef, useState } from "react"
+import { useState } from "react"
 import { PropType } from "../common"
 import { ChoppedTitle } from "../common/ChoppedTitle"
 import { Daily } from "./useDailies"
 
 type Props = {
   daily: Daily
-  check: (daily: Daily) => void
+  check: ({ id }: { id: number }) => void
   editPriority: ({
     id,
     priority,
@@ -110,7 +110,7 @@ const DailyItem = ({ daily, check, editPriority, editPriorityTop }: Props) => {
         aria-label="priority down"
         component="label"
         color="success"
-        onClick={() => check(daily)}
+        onClick={() => check({ id: daily.id })}
       >
         <CheckIcon />
       </IconButton>
