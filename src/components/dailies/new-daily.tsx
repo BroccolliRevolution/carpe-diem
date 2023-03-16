@@ -18,8 +18,8 @@ export default function NewDaily() {
 
   const utils = trpc.useContext()
   const add = trpc.daily.add.useMutation({
-    onSuccess(input) {
-      utils.daily.all.setData(undefined, input)
+    onSuccess({ all }) {
+      utils.daily.all.setData(undefined, all)
     },
   }).mutate
 

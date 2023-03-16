@@ -23,29 +23,19 @@ export const dailyRouter = router({
     //     cursor: z.string().nullish(),
     //   })
     // )
-    .query(async () => {
-      return dailiesRepo.all()
-    }),
-  byId: procedure
-    .input(
-      z.object({
-        id: z.number(),
+    .query(async () => dailiesRepo.all()),
+  byId: procedure.input(z.number()).query(async ({ input }) => {
+    const id = input
+    const res = await dailiesRepo.getById(id)
+
+    if (!res) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: `No daily with id '${id}'`,
       })
-    )
-    .query(async ({ input }) => {
-      const { id } = input
-      //   const post = await prisma.post.findUnique({
-      //     where: { id },
-      //     select: defaultPostSelect,
-      //   })
-      //   if (!post) {
-      //     throw new TRPCError({
-      //       code: "NOT_FOUND",
-      //       message: `No post with id '${id}'`,
-      //     })
-      //   }
-      return "post"
-    }),
+    }
+    return res
+  }),
   add: procedure
     .input(
       z.object({
@@ -57,9 +47,15 @@ export const dailyRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      await dailiesRepo.add(input)
-      return dailiesRepo.all()
+      const id = await dailiesRepo.add(input)
+      const all = await dailiesRepo.all()
+      return { all, id }
     }),
+  delete: procedure.input(z.number()).mutation(async ({ input }) => {
+    await dailiesRepo.delete(input)
+    // const all = await dailiesRepo.all()
+    return dailiesRepo.all()
+  }),
   check: procedure
     .input(
       z.object({

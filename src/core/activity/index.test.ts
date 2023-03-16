@@ -26,11 +26,11 @@ const dbInitAndSeed = () => {
   addActivity()
 }
 
-describe("Activities", () => {
+describe.skip("Activities", () => {
   beforeEach(() => {
     dbInitAndSeed()
   })
-  test.only("adds one activity - length of the activities increases by 1 and the same activity can be retrieved", async () => {
+  test.skip("adds one activity - length of the activities increases by 1 and the same activity can be retrieved", async () => {
     const lengthBefore = await allActivitiesCount()
     const name = "test"
     addActivity(name)

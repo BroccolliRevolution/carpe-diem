@@ -13,6 +13,9 @@ export const dailiesRepo: DailiesDbGateway = {
       data,
     })
   },
+  getById: async (id: number) => {
+    return prisma.goal.findFirst({ where: { id } })
+  },
   editPriority: async (id: number, priority: number) => {
     const newPriority = priority
 
