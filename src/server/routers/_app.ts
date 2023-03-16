@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { publicProcedure, router } from "../trpc"
+import { procedure, router } from "../trpc"
 import { activityRouter } from "./activity"
 import { dailyRouter } from "./daily"
 

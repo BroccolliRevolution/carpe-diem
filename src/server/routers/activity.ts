@@ -3,7 +3,7 @@ import { activitiesRepo } from "application/db/ActivitiesRepo"
  *
  * This is an example router, you can delete this file and then update `../pages/api/trpc/[trpc].tsx`
  */
-import { router, publicProcedure } from "../trpc"
+import { router, procedure } from "../trpc"
 import { Prisma } from "@prisma/client"
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
@@ -19,7 +19,7 @@ import { z } from "zod"
 // });
 
 export const activityRouter = router({
-  all: publicProcedure
+  all: procedure
     // .input(
     //   z.object({
     //     limit: z.number().min(1).max(100).nullish(),
@@ -65,7 +65,7 @@ export const activityRouter = router({
 
       return activitiesRepo.all()
     }),
-  byId: publicProcedure
+  byId: procedure
     .input(
       z.object({
         id: z.string(),
@@ -85,7 +85,7 @@ export const activityRouter = router({
       //   }
       return "post"
     }),
-  add: publicProcedure
+  add: procedure
     .input(
       z.object({
         id: z.string().uuid().optional(),

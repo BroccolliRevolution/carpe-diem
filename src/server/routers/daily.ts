@@ -4,7 +4,7 @@ import { activitiesRepo } from "application/db/ActivitiesRepo"
  *
  * This is an example router, you can delete this file and then update `../pages/api/trpc/[trpc].tsx`
  */
-import { router, publicProcedure } from "../trpc"
+import { router, procedure } from "../trpc"
 import { Interval, Prisma } from "@prisma/client"
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
@@ -20,7 +20,7 @@ import { z } from "zod"
 // });
 
 export const dailyRouter = router({
-  all: publicProcedure
+  all: procedure
     // .input(
     //   z.object({
     //     limit: z.number().min(1).max(100).nullish(),
@@ -30,10 +30,10 @@ export const dailyRouter = router({
     .query(async () => {
       return dailiesRepo.all()
     }),
-  byId: publicProcedure
+  byId: procedure
     .input(
       z.object({
-        id: z.string(),
+        id: z.number(),
       })
     )
     .query(async ({ input }) => {
@@ -50,7 +50,7 @@ export const dailyRouter = router({
       //   }
       return "post"
     }),
-  add: publicProcedure
+  add: procedure
     .input(
       z.object({
         title: z.string().min(1).max(80),
@@ -66,7 +66,7 @@ export const dailyRouter = router({
       await dailiesRepo.add(input)
       return dailiesRepo.all()
     }),
-  check: publicProcedure
+  check: procedure
     .input(
       z.object({
         id: z.number(),
