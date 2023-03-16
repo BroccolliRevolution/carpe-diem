@@ -1,4 +1,4 @@
-import { Interval, intervals } from "@/utils/api-types"
+import { Interval, intervals } from "@/core/daily"
 import { trpc } from "@/utils/trpc"
 import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material"
 import Button from "@mui/material/Button"
@@ -9,16 +9,12 @@ import DialogTitle from "@mui/material/DialogTitle"
 import TextField from "@mui/material/TextField"
 import { FormEvent, useState } from "react"
 
-type Props = {
-  onSave: (goal: any) => void
-}
-
-const DEFAULT_PERIODICITY: Interval = "DAY"
+const DEFAULT_PERIODICITY = intervals[0]
 export default function NewDaily() {
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState("")
   const [parentId, setParent] = useState<number | null>(0)
-  const [periodicity, setPeriodicity] = useState(DEFAULT_PERIODICITY)
+  const [periodicity, setPeriodicity] = useState<Interval>(DEFAULT_PERIODICITY)
 
   const utils = trpc.useContext()
   const add = trpc.daily.add.useMutation({

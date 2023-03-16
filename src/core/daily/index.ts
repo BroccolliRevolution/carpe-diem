@@ -1,20 +1,22 @@
-// entity type
+export const intervals = [
+  "DAY",
+  "WEEK",
+  "MONTH",
+  "QUARTER",
+  "YEAR",
+  "MONDAY",
+  "TUESDAY",
+  "WEDNESDAY",
+  "THURSDAY",
+  "FRIDAY",
+  "SATURDAY",
+  "SUNDAY",
+] as const
 
-type Interval =
-  | "MONDAY"
-  | "TUESDAY"
-  | "WEDNESDAY"
-  | "THURSDAY"
-  | "FRIDAY"
-  | "SATURDAY"
-  | "SUNDAY"
-  | "DAY"
-  | "WEEK"
-  | "MONTH"
-  | "QUARTER"
-  | "YEAR"
+export type Interval = typeof intervals[number]
 
 // TODO @Peto: rename to Goal?
+// entity type
 export type Daily = {
   id: number
   title: string
