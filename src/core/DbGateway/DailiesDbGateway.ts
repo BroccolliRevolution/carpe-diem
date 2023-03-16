@@ -5,6 +5,7 @@ export default interface DailiesDbGateway {
   editPriority: (id: number, priority: number) => void
   all: () => Promise<DailyResponse[]>
   getById: (id: number) => Promise<DailyResponse | null>
+  getByTitle: (title: string) => Promise<DailyResponse | null>
   add: (daily: DailyAddRequest) => Promise<number>
   delete: (id: number) => void
   toggle: (id: number) => void

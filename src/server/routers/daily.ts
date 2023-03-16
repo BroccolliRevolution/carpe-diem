@@ -36,6 +36,18 @@ export const dailyRouter = router({
     }
     return res
   }),
+  byTitle: procedure.input(z.string().min(1)).query(async ({ input }) => {
+    const id = input
+    const res = await dailiesRepo.getByTitle(id)
+
+    if (!res) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: `No daily with title '${id}'`,
+      })
+    }
+    return res
+  }),
   add: procedure
     .input(
       z.object({

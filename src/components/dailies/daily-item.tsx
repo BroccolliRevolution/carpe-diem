@@ -1,3 +1,4 @@
+import { Daily } from "@/utils/api-types"
 import styled from "@emotion/styled"
 import AirlineStopsIcon from "@mui/icons-material/AirlineStops"
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward"
@@ -9,7 +10,6 @@ import { Card, IconButton, Tooltip } from "@mui/material"
 import { useState } from "react"
 import { PropType } from "../common"
 import { ChoppedTitle } from "../common/ChoppedTitle"
-import { Daily } from "./useDailies"
 
 type Props = {
   daily: Daily
