@@ -63,7 +63,7 @@ describe.only("Activities", () => {
   test.only("remove daily", async () => {
     const caller = await getCaller()
 
-    const title = seeds[0].title
+    const title = seeds()[0].title
     const toDelete = await caller.daily.byTitle(title)
     expect(toDelete).not.toBeFalsy()
 

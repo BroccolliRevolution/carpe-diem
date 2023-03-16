@@ -17,8 +17,6 @@ import { seeds } from "./tests/daily.fixture"
 //   title: true,
 // });
 
-const functionName = () => {}
-
 export const dailyRouter = router({
   all: procedure
     // .input(
@@ -68,8 +66,11 @@ export const dailyRouter = router({
       return { all, id }
     }),
   seedTest: procedure.mutation(async () => {
+    const s = seeds()
+    console.log(s)
+
     const ids: number[] = await Promise.all(
-      seeds.map(async (s) => {
+      seeds().map(async (s) => {
         const id = await dailiesRepo.add(s)
         return id
       })
