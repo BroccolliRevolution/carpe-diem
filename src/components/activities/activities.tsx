@@ -6,23 +6,11 @@ import { useCallback, useMemo, useState } from "react"
 import { formatDate, today } from "../common/dateTime"
 import ActivityItem from "./activity-item"
 import { ButtonLink } from "../common/ButtonLink"
-import useActivities from "./useActivities"
 import { TitleInput } from "../common/titleInput"
 import { trpc } from "@/utils/trpc"
 import { Activity } from "@/utils/api-types"
 
 export const Activities = ({ type }: { type: "done" | "todo" }) => {
-  const {
-    // activities,
-    // addActivity,
-    // editActivity,
-    // deleteActivity,
-    checkActivity,
-
-    // editPriority,
-    // editPriorityTop,
-  } = useActivities()
-
   const utils = trpc.useContext()
   const q = trpc.activity.all.useQuery()
 
