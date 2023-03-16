@@ -7,8 +7,9 @@ export const Dailies = () => {
   const q = trpc.daily.all.useQuery()
 
   const check = trpc.daily.check.useMutation({
-    onSuccess(input) {
-      utils.daily.all.setData(undefined, input.dailies)
+    onSuccess({ dailies, activities }) {
+      utils.daily.all.setData(undefined, dailies)
+      utils.activity.all.setData(undefined, activities)
     },
   }).mutate
 
@@ -28,7 +29,7 @@ export const Dailies = () => {
             <DailyItem
               key={daily.id + daily.title}
               daily={daily}
-              check={(d) => check({ id: d.id })}
+              check={check}
               editPriorityTop={() => console.log()}
               editPriority={() => console.log()}
             />

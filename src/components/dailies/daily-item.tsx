@@ -13,7 +13,7 @@ import { ChoppedTitle } from "../common/ChoppedTitle"
 
 type Props = {
   daily: Daily
-  check: ({ id }: { id: number }) => void
+  check: (id: number) => void
   editPriority: ({
     id,
     priority,
@@ -110,7 +110,7 @@ const DailyItem = ({ daily, check, editPriority, editPriorityTop }: Props) => {
         aria-label="priority down"
         component="label"
         color="success"
-        onClick={() => check({ id: daily.id })}
+        onClick={() => check(daily.id)}
       >
         <CheckIcon />
       </IconButton>

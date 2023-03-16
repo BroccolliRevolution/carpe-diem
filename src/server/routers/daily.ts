@@ -68,16 +68,10 @@ export const dailyRouter = router({
     // const all = await dailiesRepo.all()
     return await dailiesRepo.all()
   }),
-  check: procedure
-    .input(
-      z.object({
-        id: z.number(),
-      })
-    )
-    .mutation(async ({ input }) => {
-      await dailiesRepo.toggle(input.id)
-      const activities = await activitiesRepo.all()
-      const dailies = await dailiesRepo.all()
-      return { activities, dailies }
-    }),
+  check: procedure.input(z.number()).mutation(async ({ input: id }) => {
+    await dailiesRepo.toggle(id)
+    const activities = await activitiesRepo.all()
+    const dailies = await dailiesRepo.all()
+    return { activities, dailies }
+  }),
 })
