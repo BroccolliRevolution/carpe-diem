@@ -55,6 +55,7 @@ export const Activities = ({ type }: { type: "done" | "todo" }) => {
       utils.activity.all.setData(undefined, input)
     },
   }).mutate
+
   // TODO @Peto: fix
   const activities = q.data ?? []
   const loading = q.isLoading

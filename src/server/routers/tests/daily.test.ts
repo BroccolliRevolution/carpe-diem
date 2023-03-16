@@ -3,7 +3,6 @@ import { seeds } from "./daily.fixture"
  * Integration tests for the `daily` router
  */
 
-import { DailyAddData } from "@/utils/api-types"
 import { inferProcedureInput } from "@trpc/server"
 import { createContextInner } from "../../context"
 import { appRouter, AppRouter } from "../_app"
@@ -16,14 +15,7 @@ const getCaller = async () => {
 let toCleanup = [] as number[]
 const seed = async () => {
   const caller = await getCaller()
-
-  const ids = await Promise.all(
-    seeds.map(async (s) => {
-      const { id } = await caller.daily.add(s)
-      return id
-    })
-  )
-  toCleanup = ids
+  toCleanup = await caller.daily.seedTest()
 }
 const cleanup = async () => {
   const caller = await getCaller()

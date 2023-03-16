@@ -4,6 +4,8 @@ import { TRPCError } from "@trpc/server"
 import { z } from "zod"
 import { activitiesRepo } from "../../application/db/ActivitiesRepo"
 import { dailiesRepo } from "@/application/db/DailiesRepo"
+import { appRouter } from "./_app"
+import { seeds } from "./tests/daily.fixture"
 
 // /**
 //  * Default selector for Post.
@@ -14,6 +16,8 @@ import { dailiesRepo } from "@/application/db/DailiesRepo"
 //   id: true,
 //   title: true,
 // });
+
+const functionName = () => {}
 
 export const dailyRouter = router({
   all: procedure
@@ -58,11 +62,20 @@ export const dailyRouter = router({
         periodicity: z.nativeEnum(Interval).nullish(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const id = await dailiesRepo.add(input)
       const all = await dailiesRepo.all()
       return { all, id }
     }),
+  seedTest: procedure.mutation(async () => {
+    const ids: number[] = await Promise.all(
+      seeds.map(async (s) => {
+        const id = await dailiesRepo.add(s)
+        return id
+      })
+    )
+    return ids
+  }),
   delete: procedure.input(z.number()).mutation(async ({ input }) => {
     await dailiesRepo.delete(input)
     // const all = await dailiesRepo.all()

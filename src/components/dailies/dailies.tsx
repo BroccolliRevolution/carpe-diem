@@ -1,4 +1,5 @@
 import { RouterOutputs, trpc } from "@/utils/trpc"
+import { Button } from "@mui/material"
 import DailyItem from "./daily-item"
 import NewDaily from "./new-daily"
 
@@ -13,6 +14,12 @@ export const Dailies = () => {
     },
   }).mutate
 
+  const seed = trpc.daily.seedTest.useMutation({
+    onSuccess() {
+      utils.daily.all.invalidate()
+    },
+  }).mutate
+
   const dailies = q.data
   const loading = q.isLoading
 
@@ -22,6 +29,8 @@ export const Dailies = () => {
       <h3>Dailies</h3>
 
       <NewDaily />
+
+      <Button onClick={() => seed()}>Seed</Button>
 
       <ul style={{ listStyleType: "none", padding: 0 }}>
         {dailies &&
