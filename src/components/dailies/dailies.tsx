@@ -1,4 +1,4 @@
-import { trpc } from "@/utils/trpc"
+import { RouterOutputs, trpc } from "@/utils/trpc"
 import DailyItem from "./daily-item"
 import NewDaily from "./new-daily"
 

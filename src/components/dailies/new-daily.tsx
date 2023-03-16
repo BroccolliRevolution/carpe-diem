@@ -1,3 +1,4 @@
+import { Interval, intervals } from "@/utils/api-types"
 import { trpc } from "@/utils/trpc"
 import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material"
 import Button from "@mui/material/Button"
@@ -7,7 +8,6 @@ import DialogContent from "@mui/material/DialogContent"
 import DialogTitle from "@mui/material/DialogTitle"
 import TextField from "@mui/material/TextField"
 import { FormEvent, useState } from "react"
-import useDailies, { Interval, intervals } from "./useDailies"
 
 type Props = {
   onSave: (goal: any) => void
