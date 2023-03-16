@@ -1,4 +1,4 @@
-import { activitiesRepo } from "application/db/ActivitiesRepo"
+import { activitiesRepo } from "@/application/db/ActivitiesRepo"
 import type { NextApiRequest, NextApiResponse } from "next"
 
 export default async function handler(

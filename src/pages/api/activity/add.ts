@@ -1,7 +1,6 @@
+import { activitiesRepo } from "@/application/db/ActivitiesRepo"
+import { ActivityAddRequest } from "@/core/activity"
 import type { NextApiRequest, NextApiResponse } from "next"
-
-import { activitiesRepo } from "application/db/ActivitiesRepo"
-import { ActivityAddRequest } from "core/activity"
 
 export default async function handler(
   req: NextApiRequest,
