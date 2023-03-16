@@ -1,9 +1,10 @@
-import { z } from "zod"
-import { procedure, router } from "../trpc"
+import { router } from "../trpc"
+import { activityRouter } from "./activity"
 import { dailyRouter } from "./daily"
 
 export const appRouter = router({
   daily: dailyRouter,
+  activity: activityRouter,
 })
 
 // export type definition of API

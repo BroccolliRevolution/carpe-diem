@@ -6,44 +6,96 @@ import { useCallback, useMemo, useState } from "react"
 import { formatDate, today } from "../common/dateTime"
 import ActivityItem from "./activity-item"
 import { ButtonLink } from "../common/ButtonLink"
-import useActivities, { Activity } from "./useActivities"
+import useActivities from "./useActivities"
 import { TitleInput } from "../common/titleInput"
+import { trpc } from "@/utils/trpc"
+import { Activity } from "@/utils/api-types"
 
 export const Activities = ({ type }: { type: "done" | "todo" }) => {
   const {
-    activities,
-    addActivity,
-    editActivity,
-    deleteActivity,
+    // activities,
+    // addActivity,
+    // editActivity,
+    // deleteActivity,
     checkActivity,
-    repeatActivityToday,
-    bulkRepeatToday,
-    editPriority,
-    editPriorityTop,
+
+    // editPriority,
+    // editPriorityTop,
   } = useActivities()
+
+  const utils = trpc.useContext()
+  const q = trpc.activity.all.useQuery()
+
+  const check = trpc.activity.check.useMutation({
+    onSuccess(input) {
+      utils.activity.all.setData(undefined, input)
+      utils.daily.invalidate()
+    },
+  }).mutate
+  const add = trpc.activity.add.useMutation({
+    onSuccess({ all }) {
+      utils.activity.all.setData(undefined, all)
+    },
+  }).mutate
+  const edit = trpc.activity.edit.useMutation({
+    onSuccess(input) {
+      utils.activity.all.setData(undefined, input)
+    },
+  }).mutate
+  const deleteActivity = trpc.activity.delete.useMutation({
+    onSuccess(input) {
+      utils.activity.all.setData(undefined, input)
+    },
+  }).mutate
+  const editPriorityTop = trpc.activity.topPriority.useMutation({
+    onSuccess(input) {
+      utils.activity.all.setData(undefined, input)
+    },
+  }).mutate
+  const editPriority = trpc.activity.editPriority.useMutation({
+    onSuccess(input) {
+      utils.activity.all.setData(undefined, input)
+    },
+  }).mutate
+  const repeatActivityToday = trpc.activity.repeat.useMutation({
+    onSuccess(input) {
+      utils.activity.all.setData(undefined, input)
+    },
+  }).mutate
+  const bulkRepeatToday = trpc.activity.bulkRepeat.useMutation({
+    onSuccess(input) {
+      utils.activity.all.setData(undefined, input)
+    },
+  }).mutate
+  // TODO @Peto: fix
+  const activities = q.data ?? []
+  const loading = q.isLoading
 
   type ActivitiesGroupedByDate = { date: string; activities: Activity[] }[]
 
-  const groupActivities = useCallback((activities: Activity[]) => {
-    return activities
-      .map((a) => ({
-        ...a,
-        date: formatDate(a.done_at ?? a.created_at),
-      }))
-      .reduce((prev, curr) => {
-        const atDate = prev.find((d) => d.date === curr.date)
-        if (!atDate) {
-          return [...prev, { date: curr.date, activities: [curr] }]
-        }
+  const groupActivities = useCallback(
+    (activities: Activity[]): ActivitiesGroupedByDate => {
+      return activities
+        .map((a) => ({
+          ...a,
+          date: formatDate(a.done_at ?? a.created_at),
+        }))
+        .reduce((prev, curr) => {
+          const atDate = prev.find((d) => d.date === curr.date)
+          if (!atDate) {
+            return [...prev, { date: curr.date, activities: [curr] }]
+          }
 
-        const withoutDate = prev.filter((d) => d.date !== curr.date)
+          const withoutDate = prev.filter((d) => d.date !== curr.date)
 
-        return [
-          ...withoutDate,
-          { ...atDate, activities: [...atDate.activities, curr] },
-        ]
-      }, [] as ActivitiesGroupedByDate)
-  }, [])
+          return [
+            ...withoutDate,
+            { ...atDate, activities: [...atDate.activities, curr] },
+          ]
+        }, [] as ActivitiesGroupedByDate)
+    },
+    []
+  )
 
   const activitiesToDisplay = useMemo(
     () =>
@@ -53,6 +105,7 @@ export const Activities = ({ type }: { type: "done" | "todo" }) => {
     [activities, groupActivities, type]
   )
 
+  // TODO @Peto: break out this component here from this component - it shouldn't be defined nested like this
   const ActivitiesList = ({
     activities,
   }: {
@@ -75,7 +128,11 @@ export const Activities = ({ type }: { type: "done" | "todo" }) => {
                   {i > 0 && (
                     <Button
                       variant="outlined"
-                      onClick={() => bulkRepeatToday(activities[i].activities)}
+                      onClick={() =>
+                        bulkRepeatToday(
+                          activities[i].activities.map(({ id }) => id)
+                        )
+                      }
                     >
                       <RestartAltIcon />
                     </Button>
@@ -86,9 +143,9 @@ export const Activities = ({ type }: { type: "done" | "todo" }) => {
                     <ActivityItem
                       key={activity.id + activity.title}
                       activity={activity}
-                      checkActivity={checkActivity}
+                      checkActivity={check}
                       deleteActivity={deleteActivity}
-                      editActivity={editActivity}
+                      editActivity={edit}
                       repeatActivityToday={repeatActivityToday}
                       editPriority={editPriority}
                       editPriorityTop={editPriorityTop}
@@ -112,9 +169,7 @@ export const Activities = ({ type }: { type: "done" | "todo" }) => {
   return (
     <div>
       <h3>{type === "todo" ? "Activities" : "Daily Log"}</h3>
-      {type === "todo" && (
-        <TitleInput onSave={(title) => addActivity({ title })} />
-      )}
+      {type === "todo" && <TitleInput onSave={(title) => add({ title })} />}
 
       <ActivitiesList activities={activitiesToDisplay}></ActivitiesList>
     </div>

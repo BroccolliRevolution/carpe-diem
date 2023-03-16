@@ -5,7 +5,7 @@ export type Activity = {
   done: boolean
   done_at: Date | null
   created_at: Date
-  // priority: number
+  priority: number
   // note: string | null
   // grade: number
 }

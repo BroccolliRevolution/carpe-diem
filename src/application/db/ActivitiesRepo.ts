@@ -13,6 +13,9 @@ export const activitiesRepo: ActivityDbGateway = {
     WHERE created_at >= ${limitDate}::date
     ORDER BY done_at DESC, to_char(created_at,'dd/MM/yyyy') DESC, priority DESC;`
   },
+  getById: async (id: number) => {
+    return prisma.activity.findFirst({ where: { id } })
+  },
   add: async (activity: ActivityAddRequest) => {
     // TODO @Peto: unit test this -> also use something like Required<Omit<ActivityData, 'id'>>
     // TODO @Peto: maybe check for the type here and throw an error
@@ -56,7 +59,7 @@ export const activitiesRepo: ActivityDbGateway = {
       data,
     })
   },
-  editPriorityTop: async (id: number) => {
+  topPriority: async (id: number) => {
     const activityMaxPriority = await prisma.activity.aggregate({
       _max: {
         priority: true,

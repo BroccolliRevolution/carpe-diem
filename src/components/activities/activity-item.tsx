@@ -1,3 +1,4 @@
+import { Activity, ActivityEditData } from "@/utils/api-types"
 import styled from "@emotion/styled"
 import AirlineStopsIcon from "@mui/icons-material/AirlineStops"
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward"
@@ -19,15 +20,14 @@ import {
 import { useRef, useState } from "react"
 import { ChoppedTitle } from "../common/ChoppedTitle"
 import { formatDate, formatTime, today } from "../common/dateTime"
-import { Activity, EditType } from "./useActivities"
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp]
 
 type Props = {
   activity: Activity
   checkable: boolean
-  deleteActivity: (activity: Activity) => void
-  editActivity: (data: EditType) => void
+  deleteActivity: (id: number) => void
+  editActivity: (data: ActivityEditData) => void
   editPriority: ({
     id,
     priority,
@@ -35,9 +35,9 @@ type Props = {
     id: PropType<Activity, "id">
     priority: PropType<Activity, "priority">
   }) => void
-  checkActivity: (activity: Activity) => void
-  editPriorityTop: (activity: Activity) => void
-  repeatActivityToday: (activity: Activity) => void
+  checkActivity: (id: number) => void
+  editPriorityTop: (id: number) => void
+  repeatActivityToday: (id: number) => void
 }
 const ActivityItem = ({
   activity,
@@ -130,7 +130,7 @@ const ActivityItem = ({
               color="error"
               aria-label="delete activity"
               component="label"
-              onClick={() => deleteActivity(activity)}
+              onClick={() => deleteActivity(activity.id)}
             >
               <DeleteIcon />
             </IconButton>
@@ -151,7 +151,7 @@ const ActivityItem = ({
                 size="small"
                 aria-label="top priority"
                 component="label"
-                onClick={() => editPriorityTop(activity)}
+                onClick={() => editPriorityTop(activity.id)}
               >
                 <AirlineStopsIcon />
               </IconButton>
@@ -166,7 +166,7 @@ const ActivityItem = ({
               aria-label="repeat again today"
               component="label"
               onClick={() => {
-                repeatActivityToday(activity)
+                repeatActivityToday(activity.id)
               }}
             >
               <RestartAltIcon />
@@ -181,8 +181,10 @@ const ActivityItem = ({
             component="label"
             onClick={() => {
               editActivity({
-                activity,
-                activityData: { id: activity.id, title },
+                id: activity.id,
+                data: {
+                  title,
+                },
               })
               setEditing(!editing)
             }}
@@ -219,8 +221,8 @@ const ActivityItem = ({
               ev.preventDefault()
 
               editActivity({
-                activity,
-                activityData: { id: activity.id, title },
+                id: activity.id,
+                data: { title },
               })
               setEditing(!editing)
             }
@@ -232,7 +234,7 @@ const ActivityItem = ({
         {checkable && (
           <Checkbox
             checked={activity.done}
-            onChange={() => checkActivity(activity)}
+            onChange={() => checkActivity(activity.id)}
           />
         )}
       </div>

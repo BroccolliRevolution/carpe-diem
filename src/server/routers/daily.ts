@@ -54,7 +54,7 @@ export const dailyRouter = router({
   delete: procedure.input(z.number()).mutation(async ({ input }) => {
     await dailiesRepo.delete(input)
     // const all = await dailiesRepo.all()
-    return dailiesRepo.all()
+    return await dailiesRepo.all()
   }),
   check: procedure
     .input(
