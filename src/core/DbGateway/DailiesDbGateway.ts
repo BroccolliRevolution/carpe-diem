@@ -1,4 +1,4 @@
-import { DailyAddRequest, DailyEditRequest, DailyResponse } from "core/daily"
+import { DailyEditRequest, DailyResponse, DailyAddRequest } from "../daily"
 
 export default interface DailiesDbGateway {
   edit: (id: number, data: DailyEditRequest) => void

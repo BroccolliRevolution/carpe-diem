@@ -1,5 +1,3 @@
-import { dailiesRepo } from "application/db/DailiesRepo"
-import { activitiesRepo } from "application/db/ActivitiesRepo"
 /**
  *
  * This is an example router, you can delete this file and then update `../pages/api/trpc/[trpc].tsx`
@@ -8,6 +6,8 @@ import { router, procedure } from "../trpc"
 import { Interval, Prisma } from "@prisma/client"
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
+import { activitiesRepo } from "../../application/db/ActivitiesRepo"
+import { dailiesRepo } from "@/application/db/DailiesRepo"
 
 // /**
 //  * Default selector for Post.
@@ -61,8 +61,6 @@ export const dailyRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      console.log(input)
-
       await dailiesRepo.add(input)
       return dailiesRepo.all()
     }),

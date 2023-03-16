@@ -1,7 +1,7 @@
-import { prisma } from "@/db"
-import { ActivityAddRequest, ActivityEditRequest } from "core/activity"
-import ActivityDbGateway from "core/DbGateway/ActivityDbGateway"
+import { ActivityAddRequest, ActivityEditRequest } from "@/core/activity"
+import ActivityDbGateway from "@/core/DbGateway/ActivityDbGateway"
 import dayjs from "dayjs"
+import { prisma } from "."
 
 const today = new Date(dayjs().format("YYYY-MM-DD"))
 const limitDate = dayjs().subtract(30, "day").format("YYYY-MM-DD")

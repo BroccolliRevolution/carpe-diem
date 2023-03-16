@@ -1,7 +1,5 @@
-import { prisma } from "@/db"
+import { ActivityEditRequest, ActivityAddRequest } from "@/core/activity"
 import { Activity } from "@prisma/client"
-import { ActivityAddRequest, ActivityEditRequest } from "core/activity"
-import ActivityDbGateway from "core/DbGateway/ActivityDbGateway"
 
 // TODO @Peto: get rid of import { Activity } from "@prisma/client"
 // TODO @Peto: tests shouldn't depend on prisma

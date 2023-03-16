@@ -1,10 +1,9 @@
-import { prisma } from "@/db"
+import { ActivityEditRequest } from "@/core/activity"
+import { DailyAddRequest } from "@/core/daily"
+import DailiesDbGateway from "@/core/DbGateway/DailiesDbGateway"
 import { Interval } from "@prisma/client"
-import { ActivityEditRequest } from "core/activity"
-import { DailyAddRequest } from "core/daily"
-import DailiesDbGateway from "core/DbGateway/DailiesDbGateway"
-
 import dayjs from "dayjs"
+import { prisma } from "."
 
 const today = new Date(dayjs().format("YYYY-MM-DD"))
 export const dailiesRepo: DailiesDbGateway = {
