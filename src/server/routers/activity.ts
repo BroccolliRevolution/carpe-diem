@@ -59,7 +59,6 @@ export const activityRouter = router({
         id: z.number(),
         data: z.object({
           title: z.string().min(1).optional(),
-          done: z.boolean().optional(),
           priority: z.number().optional(),
         }),
       })

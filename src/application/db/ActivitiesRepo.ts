@@ -167,8 +167,6 @@ export const activitiesRepo: ActivityDbGateway = {
 
       const maxPriority = activityMaxPriority._max.priority ?? 0
 
-      console.log(newPriority, maxPriority)
-
       if (newPriority > maxPriority) return
 
       await prisma.activity.updateMany({

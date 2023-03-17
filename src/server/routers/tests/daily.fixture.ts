@@ -10,7 +10,7 @@ export const inputAdd: DailyAddData = {
 // TODO @Peto:
 //https://fakerjs.dev/guide/usage.html
 
-const COUNT = 7
+const COUNT = 5
 const DAYLIES_MIN = 4
 
 export const seeds = (): DailyAddData[] => {

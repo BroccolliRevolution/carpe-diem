@@ -1,9 +1,12 @@
-import { RouterOutputs, trpc } from "@/utils/trpc"
+import { trpc } from "@/utils/trpc"
 import { Button } from "@mui/material"
+import { useState } from "react"
 import DailyItem from "./daily-item"
-import NewDaily from "./new-daily"
+import SaveDaily from "./save-daily"
 
 export const Dailies = () => {
+  const [openDialog, setOpenDialog] = useState(false)
+
   const utils = trpc.useContext()
   const q = trpc.daily.all.useQuery()
 
@@ -28,7 +31,14 @@ export const Dailies = () => {
     <div>
       <h3>Dailies</h3>
 
-      <NewDaily />
+      <Button variant="outlined" onClick={() => setOpenDialog(!openDialog)}>
+        Add daily
+      </Button>
+      <SaveDaily
+        type="add"
+        openDialog={openDialog}
+        handleClose={() => setOpenDialog(false)}
+      />
 
       <Button onClick={() => seed()}>Seed</Button>
 

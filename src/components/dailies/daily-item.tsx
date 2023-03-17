@@ -1,15 +1,16 @@
 import { Daily } from "@/utils/api-types"
+import { trpc } from "@/utils/trpc"
 import styled from "@emotion/styled"
-import AirlineStopsIcon from "@mui/icons-material/AirlineStops"
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward"
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward"
 import CheckIcon from "@mui/icons-material/Check"
-import EditIcon from "@mui/icons-material/Edit"
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
 
-import { Card, IconButton, Tooltip } from "@mui/material"
+import { IconButton, Tooltip } from "@mui/material"
 import { useState } from "react"
 import { PropType } from "../common"
 import { ChoppedTitle } from "../common/ChoppedTitle"
+import SaveDaily from "./save-daily"
 
 type Props = {
   daily: Daily
@@ -26,7 +27,16 @@ type Props = {
 
 const DailyItem = ({ daily, check, editPriority, editPriorityTop }: Props) => {
   const [editing, setEditing] = useState(false)
+
   const [showOptions, setShowOptions] = useState(false)
+
+  const utils = trpc.useContext()
+  const edit = trpc.daily.edit.useMutation({
+    onSuccess(_) {
+      utils.daily.invalidate()
+    },
+  }).mutate
+
   return (
     <ListItem
       key={daily.id + daily.title}
@@ -64,36 +74,24 @@ const DailyItem = ({ daily, check, editPriority, editPriorityTop }: Props) => {
           <ArrowDownwardIcon />
         </IconButton>
 
-        <div
-          style={{
-            display: showOptions ? "flex" : "none",
-            position: "absolute",
-            zIndex: 100,
+        <IconButton
+          size="small"
+          aria-label="edit activity"
+          component="label"
+          onClick={() => {
+            setShowOptions(false)
+            setEditing(!editing)
           }}
         >
-          <Card variant="outlined">
-            <IconButton
-              size="small"
-              aria-label="edit activity"
-              component="label"
-              onClick={() => {
-                setShowOptions(false)
-                setEditing(!editing)
-              }}
-            >
-              <EditIcon />
-            </IconButton>
+          <MoreHorizIcon />
+        </IconButton>
 
-            <IconButton
-              size="small"
-              aria-label="top priority"
-              component="label"
-              onClick={() => editPriorityTop(daily)}
-            >
-              <AirlineStopsIcon />
-            </IconButton>
-          </Card>
-        </div>
+        <SaveDaily
+          type="edit"
+          daily={daily}
+          openDialog={editing}
+          handleClose={() => setEditing(false)}
+        />
       </div>
 
       <ActivityTitle>

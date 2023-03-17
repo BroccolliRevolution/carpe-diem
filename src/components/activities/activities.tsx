@@ -104,6 +104,8 @@ export const Activities = ({ type }: { type: "done" | "todo" }) => {
 
     const displayDate = (date: string) => (date === today() ? "Today" : date)
 
+    if (loading) return <>Loading ...</>
+
     return (
       <>
         {activities.map((group, i) => {

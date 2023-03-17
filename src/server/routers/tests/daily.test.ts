@@ -1,3 +1,4 @@
+import { errorMessage } from "./../errors"
 import { seeds } from "./daily.fixture"
 /**
  * Integration tests for the `daily` router
@@ -12,16 +13,16 @@ const getCaller = async () => {
   return appRouter.createCaller(ctx)
 }
 
-let toCleanup = [] as number[]
+let seedsIds = [] as number[]
 const seed = async () => {
   const caller = await getCaller()
-  toCleanup = await caller.daily.seedTest()
+  seedsIds = await caller.daily.seedTest()
 }
 const cleanup = async () => {
   const caller = await getCaller()
 
-  await await Promise.all(
-    toCleanup.map(async (id) => {
+  await await Promise.allSettled(
+    seedsIds.map(async (id) => {
       try {
         await caller.daily.delete(id)
       } catch (e) {
@@ -31,7 +32,7 @@ const cleanup = async () => {
   )
 }
 
-describe.only("Activities", () => {
+describe.only("Dailies", () => {
   beforeAll(() => {})
   beforeEach(async () => {
     await seed()
@@ -39,7 +40,19 @@ describe.only("Activities", () => {
   afterEach(async () => {
     await cleanup()
   })
-  test.only("add new daily", async () => {
+
+  test("add new daily with invalid input", async () => {
+    const caller = await getCaller()
+    const input: inferProcedureInput<AppRouter["daily"]["add"]> = {
+      title: "", // empty title is invalid
+      periodicity: "DAY",
+    }
+
+    const error = /String must contain at least 1 character/
+    expect(caller.daily.add(input)).rejects.toThrowError(error)
+  })
+
+  test("add new daily", async () => {
     const caller = await getCaller()
     const input: inferProcedureInput<AppRouter["daily"]["add"]> = {
       title: "daily test",
@@ -63,19 +76,14 @@ describe.only("Activities", () => {
   test.only("remove daily", async () => {
     const caller = await getCaller()
 
-    const title = seeds()[0].title
-    const toDelete = await caller.daily.byTitle(title)
+    const id = seedsIds[0]
+    const toDelete = await caller.daily.byId(id)
     expect(toDelete).not.toBeFalsy()
 
-    await caller.daily.delete(toDelete?.id as number)
+    await caller.daily.delete(toDelete.id)
 
-    const error = `No daily with title '${title}'`
+    const error = errorMessage.noDailyWithIdFound(id)
 
-    // found here: https://tinyurl.com/458kh7fv
-    expect(caller.daily.byTitle(title)).rejects.toEqual(
-      expect.objectContaining({
-        message: error,
-      })
-    )
+    expect(caller.daily.byId(id)).rejects.toThrowError(error)
   })
 })

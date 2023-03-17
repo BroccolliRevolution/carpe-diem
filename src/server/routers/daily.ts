@@ -1,10 +1,10 @@
-import { router, procedure } from "../trpc"
-import { Interval, Prisma } from "@prisma/client"
+import { intervals } from "@/core/daily"
+import { errorMessage } from "./errors"
+import { dailiesRepo } from "@/application/db/DailiesRepo"
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
 import { activitiesRepo } from "../../application/db/ActivitiesRepo"
-import { dailiesRepo } from "@/application/db/DailiesRepo"
-import { appRouter } from "./_app"
+import { procedure, router } from "../trpc"
 import { seeds } from "./tests/daily.fixture"
 
 // /**
@@ -26,30 +26,50 @@ export const dailyRouter = router({
     //   })
     // )
     .query(async () => dailiesRepo.all()),
-  byId: procedure.input(z.number()).query(async ({ input }) => {
-    const id = input
+  byId: procedure.input(z.number()).query(async ({ input: id }) => {
     const res = await dailiesRepo.getById(id)
 
     if (!res) {
       throw new TRPCError({
         code: "NOT_FOUND",
-        message: `No daily with id '${id}'`,
+        message: errorMessage.noDailyWithIdFound(id),
       })
     }
     return res
   }),
-  byTitle: procedure.input(z.string().min(1)).query(async ({ input }) => {
-    const id = input
-    const res = await dailiesRepo.getByTitle(id)
+  byTitle: procedure
+    .input(z.string().min(1))
+    .query(async ({ input: title }) => {
+      const res = await dailiesRepo.getByTitle(title)
 
-    if (!res) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: `No daily with title '${id}'`,
+      if (!res) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: errorMessage.noDailyWithTitleFound(title),
+        })
+      }
+      return res
+    }),
+
+  edit: procedure
+    .input(
+      z.object({
+        id: z.number(),
+        data: z.object({
+          title: z.string().min(1).max(80),
+          parentId: z.number().nullish(),
+
+          // TODO @Peto: use enum from core here! not from Prisma!
+          periodicity: z.enum(intervals).nullish(),
+        }),
       })
-    }
-    return res
-  }),
+    )
+    .mutation(async ({ input }) => {
+      const { id, data } = input
+
+      await dailiesRepo.edit(id, data)
+      return await dailiesRepo.all()
+    }),
   add: procedure
     .input(
       z.object({
@@ -57,7 +77,7 @@ export const dailyRouter = router({
         parentId: z.number().nullish(),
 
         // TODO @Peto: use enum from core here! not from Prisma!
-        periodicity: z.nativeEnum(Interval).nullish(),
+        periodicity: z.enum(intervals).nullish(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -66,9 +86,6 @@ export const dailyRouter = router({
       return { all, id }
     }),
   seedTest: procedure.mutation(async () => {
-    const s = seeds()
-    console.log(s)
-
     const ids: number[] = await Promise.all(
       seeds().map(async (s) => {
         const id = await dailiesRepo.add(s)
@@ -79,7 +96,6 @@ export const dailyRouter = router({
   }),
   delete: procedure.input(z.number()).mutation(async ({ input }) => {
     await dailiesRepo.delete(input)
-    // const all = await dailiesRepo.all()
     return await dailiesRepo.all()
   }),
   check: procedure.input(z.number()).mutation(async ({ input: id }) => {

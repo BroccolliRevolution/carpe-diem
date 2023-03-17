@@ -32,6 +32,7 @@ export type Daily = {
 
 export type DailyResponse = Daily
 
+// TODO @Peto: what with these?
 export type DailyEditRequest = {
   title?: string
   priority?: number
