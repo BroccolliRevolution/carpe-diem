@@ -39,6 +39,7 @@ export default function SaveDaily({
   const [periodicity, setPeriodicity] = useState<Interval>(
     daily?.periodicity ?? DEFAULT_PERIODICITY
   )
+
   const [title, setTitle] = useState(daily?.title ?? "")
   const [error, setError] = useState(false)
 
@@ -69,20 +70,22 @@ export default function SaveDaily({
 
   const save = async (e: FormEvent) => {
     e.preventDefault()
+
     if (!title) {
       setError(true)
       return
     }
 
+    setError(false)
     if (type === "add") {
       await add({ title, parentId, periodicity })
+      setTitle("")
+      setParent(null)
+      setPeriodicity(DEFAULT_PERIODICITY)
     } else {
       await edit({ id: daily.id, data: { title, parentId, periodicity } })
     }
-    setTitle("")
-    setParent(null)
-    setError(false)
-    setPeriodicity(DEFAULT_PERIODICITY)
+
     handleClose()
   }
 
