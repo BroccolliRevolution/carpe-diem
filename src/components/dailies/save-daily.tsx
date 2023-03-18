@@ -1,5 +1,5 @@
 import { Interval, intervals } from "@/core/daily"
-import { Daily } from "@/utils/api-types"
+import { Daily, DailyAddData, DailyEditData } from "@/utils/api-types"
 import { trpc } from "@/utils/trpc"
 import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material"
 import Button from "@mui/material/Button"
@@ -12,27 +12,20 @@ import { FormEvent, useState } from "react"
 
 const DEFAULT_PERIODICITY = intervals[0]
 
-type AddProps = {
-  type: "add"
-  daily?: undefined
+type Props = {
+  daily?: Daily
   openDialog: boolean
+  save: (daily: DailyEditData | DailyAddData) => void
+  deleteDaily?: () => void
   handleClose: () => void
 }
-
-type EditProps = {
-  type: "edit"
-  daily: Daily
-  openDialog: boolean
-  handleClose: () => void
-}
-
-type Props = AddProps | EditProps
 
 export default function SaveDaily({
-  type,
   daily,
   openDialog,
+  save,
   handleClose,
+  deleteDaily,
 }: Props) {
   const [open, setOpen] = useState(openDialog)
   const [parentId, setParent] = useState<number | null>(daily?.parentId ?? null)
@@ -47,28 +40,9 @@ export default function SaveDaily({
     setOpen(openDialog)
   }
 
-  const utils = trpc.useContext()
-  const add = trpc.daily.add.useMutation({
-    onSuccess({ all }) {
-      utils.daily.all.setData(undefined, all)
-    },
-  }).mutate
-
-  const edit = trpc.daily.edit.useMutation({
-    onSuccess(all) {
-      utils.daily.all.setData(undefined, all)
-    },
-  }).mutate
-
-  const deleteDaily = trpc.daily.delete.useMutation({
-    onSuccess(all) {
-      utils.daily.all.setData(undefined, all)
-    },
-  }).mutate
-
   const dailies = trpc.daily.all.useQuery().data ?? []
 
-  const save = async (e: FormEvent) => {
+  const handleSave = async (e: FormEvent) => {
     e.preventDefault()
 
     if (!title) {
@@ -77,24 +51,36 @@ export default function SaveDaily({
     }
 
     setError(false)
-    if (type === "add") {
-      await add({ title, parentId, periodicity })
-      setTitle("")
-      setParent(null)
-      setPeriodicity(DEFAULT_PERIODICITY)
+    if (daily) {
+      save({
+        id: daily.id ?? 0,
+        data: {
+          title,
+          periodicity,
+          parentId,
+        },
+      })
     } else {
-      await edit({ id: daily.id, data: { title, parentId, periodicity } })
+      save({
+        title,
+        periodicity,
+        parentId,
+      })
     }
+    handleClose()
+  }
 
+  const close = () => {
     handleClose()
   }
 
   return (
     <>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>New Permanent Task</DialogTitle>
+      <Dialog open={open} onClose={close}>
+        <DialogTitle>{daily ? "Edit " : "New"} Permanent Task</DialogTitle>
+
         <DialogContent>
-          <Box component="form" maxWidth={380} noValidate onSubmit={save}>
+          <Box component="form" maxWidth={380} noValidate onSubmit={handleSave}>
             <TextField
               margin="normal"
               fullWidth
@@ -171,8 +157,10 @@ export default function SaveDaily({
                 const confirmed = window.confirm(
                   "Are you sure you want to delete this daily?"
                 )
+
+                // TODO @Peto: make the use of discriminating union or something else in this components props
                 if (confirmed) {
-                  deleteDaily(daily.id)
+                  deleteDaily?.()
                   handleClose()
                 }
               }}
@@ -180,14 +168,7 @@ export default function SaveDaily({
               Delete
             </Button>
           )}
-          <Button
-            onClick={() => {
-              setError(false)
-              handleClose()
-            }}
-          >
-            Cancel
-          </Button>
+          <Button onClick={close}>Cancel</Button>
         </DialogActions>
       </Dialog>
     </>

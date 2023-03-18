@@ -1,5 +1,4 @@
 import { Daily } from "@/utils/api-types"
-import { trpc } from "@/utils/trpc"
 import styled from "@emotion/styled"
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward"
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward"
@@ -10,11 +9,11 @@ import { IconButton, Tooltip } from "@mui/material"
 import { useState } from "react"
 import { PropType } from "../common"
 import { ChoppedTitle } from "../common/ChoppedTitle"
-import SaveDaily from "./save-daily"
 
 type Props = {
   daily: Daily
   check: (id: number) => void
+  editing: () => void
   editPriority: ({
     id,
     priority,
@@ -25,17 +24,16 @@ type Props = {
   editPriorityTop: (daily: Daily) => void
 }
 
-const DailyItem = ({ daily, check, editPriority, editPriorityTop }: Props) => {
-  const [editing, setEditing] = useState(false)
+const DailyItem = ({
+  daily,
+  check,
+  editPriority,
+  editPriorityTop,
+  editing,
+}: Props) => {
+  const [editinsg, setEditing] = useState(false)
 
   const [showOptions, setShowOptions] = useState(false)
-
-  const utils = trpc.useContext()
-  const edit = trpc.daily.edit.useMutation({
-    onSuccess(_) {
-      utils.daily.invalidate()
-    },
-  }).mutate
 
   return (
     <ListItem
@@ -81,17 +79,11 @@ const DailyItem = ({ daily, check, editPriority, editPriorityTop }: Props) => {
           onClick={() => {
             setShowOptions(false)
             setEditing(!editing)
+            editing()
           }}
         >
           <MoreHorizIcon />
         </IconButton>
-
-        <SaveDaily
-          type="edit"
-          daily={daily}
-          openDialog={editing}
-          handleClose={() => setEditing(false)}
-        />
       </div>
 
       <ActivityTitle>
