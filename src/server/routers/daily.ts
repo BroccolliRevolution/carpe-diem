@@ -75,8 +75,9 @@ export const dailyRouter = router({
     )
     .mutation(async ({ input, ctx }) => {
       const id = await dailiesRepo.add(input)
+      const daily = await dailiesRepo.getById(id)
       const all = await dailiesRepo.all()
-      return { all, id }
+      return { all, daily }
     }),
   seedTest: procedure.mutation(async () => {
     const ids: number[] = await Promise.all(

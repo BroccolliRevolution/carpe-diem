@@ -28,8 +28,11 @@ const useDaily = () => {
   }).mutate
 
   const add = trpc.daily.add.useMutation({
-    onSuccess({ all }) {
+    onSuccess({ all, daily }) {
       utils.daily.all.setData(undefined, all)
+    },
+    onError(err) {
+      alert(err.message)
     },
   }).mutate
 
@@ -55,7 +58,8 @@ const useDaily = () => {
 
 export const Dailies = () => {
   const [openDialog, setOpenDialog] = useState(false)
-  const [editedDaily, setEditedDaily] = useState<Daily | undefined>()
+  const [editedDaily, setEditedDaily] = useState<Daily | undefined | null>()
+  const [added, setAdded] = useState(false)
 
   const { dailies, loading, check, seed, deleteDaily, edit, add } = useDaily()
 
@@ -68,13 +72,14 @@ export const Dailies = () => {
         variant="outlined"
         onClick={() => {
           setEditedDaily(undefined)
+          setAdded(false)
           setOpenDialog(!openDialog)
         }}
       >
         Add daily
       </Button>
       <SaveDaily
-        key={editedDaily?.id}
+        key={editedDaily?.id ?? (added ? "added" : "prepared")}
         daily={editedDaily}
         openDialog={openDialog || Boolean(editedDaily)}
         handleClose={() => {
@@ -82,11 +87,14 @@ export const Dailies = () => {
           setEditedDaily(undefined)
         }}
         deleteDaily={() => deleteDaily(editedDaily?.id as number)}
-        save={(daily) =>
-          editedDaily
-            ? edit(daily as DailyEditData)
-            : add(daily as DailyAddData)
-        }
+        save={async (daily) => {
+          if (editedDaily) {
+            edit(daily as DailyEditData)
+          } else {
+            add(daily as DailyAddData)
+            setAdded(true)
+          }
+        }}
       />
 
       <Button onClick={() => seed()}>Seed</Button>

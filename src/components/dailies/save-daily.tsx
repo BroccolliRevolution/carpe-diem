@@ -13,7 +13,7 @@ import { FormEvent, useState } from "react"
 const DEFAULT_PERIODICITY = intervals[0]
 
 type Props = {
-  daily?: Daily
+  daily?: Daily | null
   openDialog: boolean
   save: (daily: DailyEditData | DailyAddData) => void
   deleteDaily?: () => void
