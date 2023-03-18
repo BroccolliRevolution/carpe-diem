@@ -75,9 +75,6 @@ export const Dailies = () => {
       </Button>
       <SaveDaily
         key={editedDaily?.id}
-        // { ...{editedDaily ? {daily: editedDaily} : {}}}
-
-        // {...(editedDaily ? { daily: editedDaily } : {})}
         daily={editedDaily}
         openDialog={openDialog || Boolean(editedDaily)}
         handleClose={() => {
@@ -103,9 +100,7 @@ export const Dailies = () => {
               check={check}
               editPriorityTop={() => console.log()}
               editPriority={() => console.log()}
-              editing={() => {
-                setEditedDaily(daily)
-              }}
+              editing={() => setEditedDaily(daily)}
             />
           ))}
       </ul>

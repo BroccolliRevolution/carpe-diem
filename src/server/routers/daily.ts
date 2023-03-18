@@ -18,14 +18,7 @@ import { seeds } from "./tests/daily.fixture"
 // });
 
 export const dailyRouter = router({
-  all: procedure
-    // .input(
-    //   z.object({
-    //     limit: z.number().min(1).max(100).nullish(),
-    //     cursor: z.string().nullish(),
-    //   })
-    // )
-    .query(async () => dailiesRepo.all()),
+  all: procedure.query(async () => dailiesRepo.all()),
   byId: procedure.input(z.number()).query(async ({ input: id }) => {
     const res = await dailiesRepo.getById(id)
 
