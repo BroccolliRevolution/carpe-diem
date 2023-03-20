@@ -50,12 +50,15 @@ describe.only("Dailies", () => {
       periodicity: periodicity ?? "DAY",
     }
 
-    const { id, all } = await caller.daily.add(input)
+    const { daily, all } = await caller.daily.add(input)
 
-    const daily = await caller.daily.byId(id)
     expect(daily).not.toBeFalsy()
 
-    return { id, all, daily }
+    if (!daily) {
+      throw new Error("daily not saved")
+    }
+
+    return { all, daily }
   }
 
   describe("add new daily", () => {
@@ -68,16 +71,18 @@ describe.only("Dailies", () => {
       const before = await caller.daily.all()
       const lengthBefore = before.length
 
-      const { id, all: after, daily } = await seedOne(title, periodicity)
+      const { all: after, daily } = await seedOne(title, periodicity)
+
+      expect(daily).not.toBeFalsy()
 
       const lengthAfter = after.length
       expect(lengthAfter).toBe(lengthBefore + 1)
 
-      expect(daily.title).toBe(title)
-      expect(daily.periodicity).toBe(periodicity)
+      expect(daily?.title).toBe(title)
+      expect(daily?.periodicity).toBe(periodicity)
 
       // cleanup
-      await caller.daily.delete(id)
+      await caller.daily.delete(daily?.id ?? 0)
     })
 
     test("with invalid input", async () => {
@@ -96,31 +101,30 @@ describe.only("Dailies", () => {
     test("title and periodicity", async () => {
       const caller = await getCaller()
 
-      const { id, all, daily } = await seedOne()
-
-      daily.title = "UPDATED daily title"
-      daily.periodicity = "QUARTER"
+      const { daily } = await seedOne()
+      const title = "UPDATED daily title"
+      const periodicity = "QUARTER"
 
       expect(daily).not.toBeFalsy()
 
-      await caller.daily.edit({ id, data: daily })
+      await caller.daily.edit({ id: daily.id, data: { title, periodicity } })
 
-      const edited = await caller.daily.byId(id)
+      const edited = await caller.daily.byId(daily.id)
 
-      expect(edited?.title).toBe(daily.title)
-      expect(edited?.periodicity).toBe(daily.periodicity)
+      expect(edited.title).toBe(daily.title)
+      expect(edited.periodicity).toBe(daily.periodicity)
     })
     test("with invalid input", async () => {
       const caller = await getCaller()
 
-      const { id, daily } = await seedOne()
+      const { daily } = await seedOne()
 
       daily.title = ""
       daily.periodicity = "__INVALID TEST PERIODICITY__" as Interval // need to force this typing
 
       expect(daily).not.toBeFalsy()
 
-      await caller.daily.edit({ id, data: daily }).catch((e) => {
+      await caller.daily.edit({ id: daily.id, data: daily }).catch((e) => {
         const issues = e.cause.issues
 
         expect(issues).toEqual(
