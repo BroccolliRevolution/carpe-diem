@@ -10,8 +10,6 @@ const MyApp: AppType = ({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps) => {
-  const queryClient = new QueryClient()
-
   return (
     // <QueryClientProvider client={queryClient}>
     <SessionProvider session={session}>
