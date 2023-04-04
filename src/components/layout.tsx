@@ -1,6 +1,6 @@
 import styled from "@emotion/styled"
+import { CssBaseline } from "@mui/material"
 import Box from "@mui/material/Box"
-import CssBaseline from "@mui/material/CssBaseline"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import Toolbar from "@mui/material/Toolbar"
 import * as React from "react"
